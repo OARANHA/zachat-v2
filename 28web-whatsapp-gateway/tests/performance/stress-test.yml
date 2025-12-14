@@ -1,0 +1,25 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    - duration: 30
+      arrivalRate: 1
+    - duration: 30
+      arrivalRate: 10
+    - duration: 30
+      arrivalRate: 50
+    - duration: 30
+      arrivalRate: 100
+    - duration: 30
+      arrivalRate: 500
+  scenarios:
+    - name: "Teste de Estresse - Pico de Carga"
+      weight: 100
+      flow:
+        - post:
+            url: "/api/sessions"
+            json:
+              apiKey: "stress-test-key"
+            capture:
+              - json: "$.sessionId"
+              - json: "$.responseStatus"
+              - json: "$.responseTime"

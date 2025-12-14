@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  whatsapp-gateway:
+    build: .
+    container_name: 28web-whatsapp-gateway
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - API_KEY=${WHATSAPP_GATEWAY_API_KEY}
+      - APP_WEBHOOK_API_KEY=${APP_WEBHOOK_API_KEY}
+      - REDIS_URL=redis://redis:6379
+      - CHROME_BIN=google-chrome-stable
+      - CHROME_ARGS=--no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage
+      - WWEBJS_AUTH_PATH=/app/.wwebjs_auth
+      - HEALTH_CHECK_INTERVAL=30000
+      - PERFORMANCE_MONITORING=false
+    volumes:
+      - ./.data/.wwebjs_auth:/app/.wwebjs_auth
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    container_name: 28web-whatsapp-gateway-redis
+    ports:
+      - "6380:6379"

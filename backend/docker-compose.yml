@@ -1,0 +1,243 @@
+services:
+  # Backend principal (28web Hub)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 28web-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - BACKEND_URL=http://localhost:8080
+      - FRONTEND_URL=http://localhost:3000
+      - PROXY_PORT=8080
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_NAME=chatex
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - JWT_SECRET=28web_jwt_secret_key_change_in_production
+      - JWT_REFRESH_SECRET=28web_jwt_refresh_secret_key_change_in_production
+      - API_TOKEN_SECRET=28web_api_token_secret_change_in_production
+      - CONNECTIONS_LIMIT=10
+      - REGISTER_CHECK_IP=true
+      - USER_LIMIT_RANDOM_NUMBER=5
+      - USER_LIMIT_MIN_NUMBER_ORIGIN=100
+      - USER_LIMIT_MAX_NUMBER_ORIGIN=99999
+      - FACEBOOK_APP_ID=your_facebook_app_id
+      - FACEBOOK_APP_SECRET=your_facebook_app_secret
+      - INSTAGRAM_USER=your_instagram_user
+      - INSTAGRAM_PASSWORD=your_instagram_password
+      - TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+      # Billing Configuration
+      - BILLING_PROVIDER=vendaerp
+      - VENDAERP_API_URL=https://api.vendaerp.com.br
+      - VENDAERP_API_TOKEN=your_vendaerp_api_token
+      - VENDAERP_WEBHOOK_SECRET=your_vendaerp_webhook_secret
+      # WhatsApp Gateway Configuration
+      - WHATSAPP_GATEWAY_URL=http://whatsapp-gateway:3001
+      - WHATSAPP_GATEWAY_API_KEY=whatsapp_gateway_api_key_change_in_production
+      - APP_WEBHOOK_URL=http://localhost:8080/webhooks/whatsapp
+      # Monitoring
+      - PROMETHEUS_ENABLED=true
+      - PROMETHEUS_PORT=9464
+    volumes:
+      - .:/usr/src/app
+      - ./.wwebjs_auth:/usr/src/app/.wwebjs_auth
+      - ./public:/usr/src/app/public
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - 28web-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # WhatsApp Gateway Microservice
+  whatsapp-gateway:
+    build:
+      context: ./28web-whatsapp-gateway
+      dockerfile: Dockerfile
+    container_name: 28web-whatsapp-gateway
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+      - "9465:9465"  # Metrics do gateway
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/whatsapp_gateway
+      - REDIS_URL=redis://redis:6379
+      - API_KEY=whatsapp_gateway_api_key_change_in_production
+      - APP_WEBHOOK_URL=http://localhost:8080/webhooks/whatsapp
+      - LOG_LEVEL=info
+      - PROMETHEUS_ENABLED=true
+      - PROMETHEUS_PORT=9465
+      - SESSION_TIMEOUT=300000
+      - MAX_SESSIONS_PER_TENANT=5
+      - RATE_LIMIT_WINDOW=60000
+      - RATE_LIMIT_MAX_REQUESTS=100
+      - WEBHOOK_RETRY_ATTEMPTS=3
+      - WEBHOOK_RETRY_DELAY=5000
+      - HEALTH_CHECK_INTERVAL=30000
+    volumes:
+      - ./28web-whatsapp-gateway/sessions:/app/sessions
+      - ./.wwebjs_auth:/app/.wwebjs_auth
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - 28web-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend (Quasar/Vue)
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: 28web-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - VUE_APP_API_URL=http://localhost:8080
+      - VUE_APP_WS_URL=ws://localhost:8080
+    volumes:
+      - ../frontend:/usr/src/app
+    depends_on:
+      - backend
+    networks:
+      - 28web-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: 28web-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chatex
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - 28web-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: 28web-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - 28web-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Prometheus - Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: 28web-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - 28web-network
+    depends_on:
+      - backend
+      - whatsapp-gateway
+
+  # Grafana - Visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: 28web-grafana
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin28web
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - 28web-network
+    depends_on:
+      - prometheus
+
+  # RabbitMQ - Message Queue (opcional)
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 28web-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin28web
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - 28web-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+networks:
+  28web-network:
+    driver: bridge

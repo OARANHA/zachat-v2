@@ -1,0 +1,28 @@
+{
+  "nginx_routing_fix": {
+    "description": "Rotas de API sem prefixo /api retornando 404",
+    "problem": "Frontend fazendo requisições para /queue, /settings, /statistics-* mas nginx só roteava /api/ e /auth/",
+    "solution": "Adicionado location regex no nginx para rotear rotas específicas sem prefixo /api para o backend",
+    "files_affected": ["frontend/nginx.conf"],
+    "nginx_config_added": "location ~ ^/(queue|settings|statistics-tickets-times|statistics-tickets-channels|statistics-tickets-evolution-channels|statistics-tickets-queue|statistics-tickets-evolution-by-period|statistics-tickets-per-users-detail)",
+    "date": "2025-12-13T19:55:00-03:00"
+  },
+  "route_prefix_duplication": {
+    "description": "Duplicação de prefixo em rotas Express",
+    "problem": "Arquivos de rota definiam caminhos completos (ex: /queue) mas já eram montados com prefixo (routes.use('/queue', queueRoutes))",
+    "solution": "Removido prefixo duplicado das definições de rotas, mantendo apenas o path relativo",
+    "files_affected": ["backend/src/routes/queueRoutes.ts", "backend/src/routes/settingRoutes.ts"],
+    "corrections": [
+      "queueRoutes: '/queue' -> '/'",
+      "settingRoutes: '/settings' -> '/'"
+    ],
+    "date": "2025-12-13T19:55:00-03:00"
+  },
+  "container_build_required": {
+    "description": "Alterações em arquivos TypeScript requerem rebuild do container",
+    "problem": "Mudanças no código-fonte não eram aplicadas sem rebuild completo do Docker",
+    "solution": "Usar docker-compose up --build -d backend para aplicar alterações no código",
+    "command": "docker-compose up --build -d backend",
+    "date": "2025-12-13T19:55:00-03:00"
+  }
+}

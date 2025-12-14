@@ -1,0 +1,17 @@
+oconfig:
+  target: 'http://localhost:3000'
+  phases:
+    - duration: 60
+      arrivalRate: 10
+  scenarios:
+    - name: "Criar Sessão WhatsApp - Baixa Carga"
+      weight: 100
+      flow:
+        - post:
+            url: "/api/sessions"
+            json:
+              apiKey: "test-key-{{$randomString()}}"
+            capture:
+              - json: "$.sessionId"
+              - json: "$.responseStatus"
+              - json: "$.responseTime"
