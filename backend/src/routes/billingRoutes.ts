@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import PlanService from '../services/BillingServices/PlanService';
 import isAuth from '../middleware/isAuth';
+import TenantBillingController from '../controllers/TenantBillingController';
 
 const router = Router();
 
@@ -168,5 +169,10 @@ router.get('/subscriptions', isAuth, async (req, res) => {
     });
   }
 });
+
+// ========== Tenant Billing endpoints ==========
+router.get('/tenant/usage', isAuth, TenantBillingController.getUsage);
+router.get('/tenant/subscription', isAuth, TenantBillingController.getTenantSubscription);
+router.get('/tenant/plans', isAuth, TenantBillingController.listPlans);
 
 export default router;
