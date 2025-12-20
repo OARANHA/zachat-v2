@@ -3,7 +3,7 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    redirect: { name: 'home' },
+    redirect: { name: 'home-dashboard' },
     children: [
       { path: '', component: () => import('pages/dashboard/Index.vue') },
       { path: '/home', name: 'home-dashboard', component: () => import('pages/dashboard/Index.vue') },
@@ -23,12 +23,12 @@ const routes = [
       { path: '/configuracoes', name: 'configuracoes', component: () => import('pages/configuracoes/Index.vue') },
       { path: '/etiquetas', name: 'etiquetas', component: () => import('pages/etiquetas/Index.vue') },
       { path: '/campanhas', name: 'campanhas', component: () => import('pages/campanhas/Index.vue') },
-      { path: '/campanhas/:campanhaId', name: 'contatos-campanha', component: () => import('pages/campanhas/ContatosCampanha.vue') },
+      { path: '/campanhas/:campanhaId', name: 'contatos-campanha', component: () => import('pages/campanhas/ContatosCampanha.vue'), props: true },
       { path: '/horario-atendimento', name: 'horarioAtendimento', component: () => import('pages/horarioAtendimento/Index.vue') },
       { path: '/api-service', name: 'api-service', component: () => import('pages/api/Index.vue') },
       { path: '/sessaosuper', name: 'sessaosuper', component: () => import('pages/sessaosuper/Index.vue') },
       { path: '/usuariossuper', name: 'usuariossuper', component: () => import('pages/usuariossuper/Index.vue') },
-      { path: '/empresassuper', name: 'empresassuper', component: () => import('pages/super/SuperEmpresas.vue'), meta: { requiresAuth: true, requiresSuper: true } },
+      
       {
         path: '/billing',
         name: 'billing',
@@ -96,9 +96,15 @@ const routes = [
     component: () => import('pages/atendimento/Index.vue'),
     children: [
       {
-        path: '/chats/',
+        path: 'chats',
         name: 'chat-empty',
         component: () => import('pages/atendimento/Chat.vue')
+      },
+      {
+        path: 'contatos',
+        name: 'chat-contatos',
+        component: () => import('pages/contatos/Index.vue'),
+        props: { isChatContact: true }
       },
       {
         path: ':ticketId',
@@ -110,27 +116,21 @@ const routes = [
         //   }
         //   next()
         // }
-      },
-      {
-        path: 'contatos',
-        name: 'chat-contatos',
-        component: () => import('pages/contatos/Index.vue'),
-        props: { isChatContact: true }
       }
 
     ]
   },
 
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('pages/Login.vue')
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
     path: '*',
     component: () => import('pages/Error404.vue')
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('pages/Login.vue')
   }
 ]
 
