@@ -98,9 +98,15 @@ export const updateBusinessHours = async (
     });
   } catch (error) {
     logger.error(`Erro ao atualizar horários de atendimento: ${error}`);
-    return res.status(error.statusCode || 500).json({
-      message: error.message || "Erro ao atualizar horários de atendimento",
-      errors: (error as any)?.errors || undefined
+    logger.error('Detalhes do erro (updateBusinessHours):', {
+      message: (error as any)?.message,
+      stack: (error as any)?.stack,
+      params: req.params,
+      body: req.body
+    });
+    return res.status((error as any)?.statusCode || 500).json({
+      message: 'Erro ao atualizar horários de atendimento',
+      errors: [(error as any)?.message || 'Erro interno']
     });
   }
 };
