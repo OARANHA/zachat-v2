@@ -1,0 +1,4457 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict tQ2BhfxrEbWCe2cdHdCfgjqEMPQvdViuFHV8pjCBDWL1bYfeUv7lruUewpL6xWL
+
+-- Dumped from database version 15.15
+-- Dumped by pg_dump version 17.6
+
+-- Started on 2025-12-21 14:38:45
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+DROP DATABASE chatex;
+--
+-- TOC entry 4064 (class 1262 OID 16384)
+-- Name: chatex; Type: DATABASE; Schema: -; Owner: chatex
+--
+
+CREATE DATABASE chatex WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
+
+
+ALTER DATABASE chatex OWNER TO chatex;
+
+\unrestrict tQ2BhfxrEbWCe2cdHdCfgjqEMPQvdViuFHV8pjCBDWL1bYfeUv7lruUewpL6xWL
+\connect chatex
+\restrict tQ2BhfxrEbWCe2cdHdCfgjqEMPQvdViuFHV8pjCBDWL1bYfeUv7lruUewpL6xWL
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 5 (class 2615 OID 26074)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: chatex
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO chatex;
+
+--
+-- TOC entry 4065 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: chatex
+--
+
+COMMENT ON SCHEMA public IS '';
+
+
+--
+-- TOC entry 1058 (class 1247 OID 37020)
+-- Name: enum_ERPProviders_providerType; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_ERPProviders_providerType" AS ENUM (
+    'vendaerp',
+    'bling',
+    'omie',
+    'mercadopago'
+);
+
+
+ALTER TYPE public."enum_ERPProviders_providerType" OWNER TO chatex;
+
+--
+-- TOC entry 1061 (class 1247 OID 37030)
+-- Name: enum_ERPProviders_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_ERPProviders_status" AS ENUM (
+    'active',
+    'inactive',
+    'error'
+);
+
+
+ALTER TYPE public."enum_ERPProviders_status" OWNER TO chatex;
+
+--
+-- TOC entry 998 (class 1247 OID 26775)
+-- Name: enum_ErpProviders_providerType; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_ErpProviders_providerType" AS ENUM (
+    'vendaerp',
+    'bling',
+    'omie',
+    'mercadopago'
+);
+
+
+ALTER TYPE public."enum_ErpProviders_providerType" OWNER TO chatex;
+
+--
+-- TOC entry 1001 (class 1247 OID 26784)
+-- Name: enum_ErpProviders_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_ErpProviders_status" AS ENUM (
+    'active',
+    'inactive',
+    'error'
+);
+
+
+ALTER TYPE public."enum_ErpProviders_status" OWNER TO chatex;
+
+--
+-- TOC entry 1049 (class 1247 OID 36018)
+-- Name: enum_Plans_billingCycle; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_Plans_billingCycle" AS ENUM (
+    'monthly',
+    'quarterly',
+    'yearly'
+);
+
+
+ALTER TYPE public."enum_Plans_billingCycle" OWNER TO chatex;
+
+--
+-- TOC entry 1007 (class 1247 OID 26850)
+-- Name: enum_Plans_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_Plans_status" AS ENUM (
+    'active',
+    'inactive'
+);
+
+
+ALTER TYPE public."enum_Plans_status" OWNER TO chatex;
+
+--
+-- TOC entry 1046 (class 1247 OID 27520)
+-- Name: enum_Roles_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_Roles_status" AS ENUM (
+    'active',
+    'inactive',
+    'archived'
+);
+
+
+ALTER TYPE public."enum_Roles_status" OWNER TO chatex;
+
+--
+-- TOC entry 1004 (class 1247 OID 26809)
+-- Name: enum_Subscriptions_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_Subscriptions_status" AS ENUM (
+    'pending',
+    'active',
+    'paused',
+    'canceled'
+);
+
+
+ALTER TYPE public."enum_Subscriptions_status" OWNER TO chatex;
+
+--
+-- TOC entry 1010 (class 1247 OID 26868)
+-- Name: enum_TenantPlans_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_TenantPlans_status" AS ENUM (
+    'active',
+    'inactive',
+    'trial'
+);
+
+
+ALTER TYPE public."enum_TenantPlans_status" OWNER TO chatex;
+
+--
+-- TOC entry 953 (class 1247 OID 26325)
+-- Name: enum_Tenants_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_Tenants_status" AS ENUM (
+    'active',
+    'inactive',
+    'suspended',
+    'trial'
+);
+
+
+ALTER TYPE public."enum_Tenants_status" OWNER TO chatex;
+
+--
+-- TOC entry 1013 (class 1247 OID 26981)
+-- Name: enum_erp_providers_providerType; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public."enum_erp_providers_providerType" AS ENUM (
+    'vendaerp',
+    'bling',
+    'omie',
+    'mercadopago'
+);
+
+
+ALTER TYPE public."enum_erp_providers_providerType" OWNER TO chatex;
+
+--
+-- TOC entry 1016 (class 1247 OID 26990)
+-- Name: enum_erp_providers_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public.enum_erp_providers_status AS ENUM (
+    'active',
+    'inactive',
+    'error'
+);
+
+
+ALTER TYPE public.enum_erp_providers_status OWNER TO chatex;
+
+--
+-- TOC entry 1019 (class 1247 OID 27015)
+-- Name: enum_subscriptions_status; Type: TYPE; Schema: public; Owner: chatex
+--
+
+CREATE TYPE public.enum_subscriptions_status AS ENUM (
+    'pending',
+    'active',
+    'paused',
+    'canceled'
+);
+
+
+ALTER TYPE public.enum_subscriptions_status OWNER TO chatex;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 257 (class 1259 OID 26595)
+-- Name: ApiConfigs; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ApiConfigs" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "sessionId" integer,
+    name character varying(255) DEFAULT ''::character varying NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    token character varying(255) DEFAULT NULL::character varying,
+    "userId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "urlServiceStatus" text,
+    "urlMessageStatus" text,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "authToken" text
+);
+
+
+ALTER TABLE public."ApiConfigs" OWNER TO chatex;
+
+--
+-- TOC entry 258 (class 1259 OID 26622)
+-- Name: ApiMessages; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ApiMessages" (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    "messageId" character varying(255) DEFAULT NULL::character varying,
+    "externalKey" character varying(255) DEFAULT NULL::character varying,
+    body text NOT NULL,
+    ack integer DEFAULT 0 NOT NULL,
+    number character varying(255) NOT NULL,
+    "mediaName" text,
+    "timestamp" integer,
+    "sessionId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "messageWA" jsonb,
+    "apiConfig" jsonb,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "mediaUrl" text
+);
+
+
+ALTER TABLE public."ApiMessages" OWNER TO chatex;
+
+--
+-- TOC entry 230 (class 1259 OID 26202)
+-- Name: AutoReply; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."AutoReply" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    action integer DEFAULT 0 NOT NULL,
+    "userId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    "celularTeste" character varying(255) DEFAULT NULL::character varying,
+    "tenantId" integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public."AutoReply" OWNER TO chatex;
+
+--
+-- TOC entry 242 (class 1259 OID 26397)
+-- Name: AutoReplyLogs; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."AutoReplyLogs" (
+    id integer NOT NULL,
+    "autoReplyId" integer NOT NULL,
+    "autoReplyName" character varying(255) NOT NULL,
+    "stepsReplyId" integer NOT NULL,
+    "stepsReplyMessage" character varying(255) NOT NULL,
+    "wordsReply" character varying(255) NOT NULL,
+    "contactId" integer,
+    "ticketId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."AutoReplyLogs" OWNER TO chatex;
+
+--
+-- TOC entry 241 (class 1259 OID 26396)
+-- Name: AutoReplyLogs_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."AutoReplyLogs_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."AutoReplyLogs_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4067 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: AutoReplyLogs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."AutoReplyLogs_id_seq" OWNED BY public."AutoReplyLogs".id;
+
+
+--
+-- TOC entry 266 (class 1259 OID 27472)
+-- Name: AutoReplyLogss; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."AutoReplyLogss" (
+);
+
+
+ALTER TABLE public."AutoReplyLogss" OWNER TO chatex;
+
+--
+-- TOC entry 229 (class 1259 OID 26201)
+-- Name: AutoReply_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."AutoReply_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."AutoReply_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4068 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: AutoReply_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."AutoReply_id_seq" OWNED BY public."AutoReply".id;
+
+
+--
+-- TOC entry 267 (class 1259 OID 27475)
+-- Name: AutoReplys; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."AutoReplys" (
+    "celularTeste" text
+);
+
+
+ALTER TABLE public."AutoReplys" OWNER TO chatex;
+
+--
+-- TOC entry 256 (class 1259 OID 26572)
+-- Name: CampaignContacts; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."CampaignContacts" (
+    id integer NOT NULL,
+    "messageRandom" character varying(255) NOT NULL,
+    body text,
+    "mediaName" character varying(255) DEFAULT NULL::character varying,
+    "messageId" character varying(255) DEFAULT NULL::character varying,
+    "jobId" character varying(255) DEFAULT NULL::character varying,
+    ack integer DEFAULT 0 NOT NULL,
+    "timestamp" integer,
+    "contactId" integer,
+    "campaignId" integer DEFAULT 0 NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."CampaignContacts" OWNER TO chatex;
+
+--
+-- TOC entry 255 (class 1259 OID 26571)
+-- Name: CampaignContacts_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."CampaignContacts_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."CampaignContacts_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4069 (class 0 OID 0)
+-- Dependencies: 255
+-- Name: CampaignContacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."CampaignContacts_id_seq" OWNED BY public."CampaignContacts".id;
+
+
+--
+-- TOC entry 268 (class 1259 OID 27480)
+-- Name: CampaignContactss; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."CampaignContactss" (
+);
+
+
+ALTER TABLE public."CampaignContactss" OWNER TO chatex;
+
+--
+-- TOC entry 254 (class 1259 OID 26544)
+-- Name: Campaigns; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Campaigns" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    start timestamp with time zone NOT NULL,
+    status character varying(255) DEFAULT 'pending'::character varying NOT NULL,
+    "sessionId" integer,
+    message1 text NOT NULL,
+    message2 text NOT NULL,
+    message3 text NOT NULL,
+    "mediaUrl" character varying(255) DEFAULT NULL::character varying,
+    "mediaType" character varying(255) DEFAULT NULL::character varying,
+    "userId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    delay integer DEFAULT 20 NOT NULL
+);
+
+
+ALTER TABLE public."Campaigns" OWNER TO chatex;
+
+--
+-- TOC entry 253 (class 1259 OID 26543)
+-- Name: Campaigns_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Campaigns_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Campaigns_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4070 (class 0 OID 0)
+-- Dependencies: 253
+-- Name: Campaigns_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Campaigns_id_seq" OWNED BY public."Campaigns".id;
+
+
+--
+-- TOC entry 264 (class 1259 OID 26699)
+-- Name: ChatFlow; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ChatFlow" (
+    id integer NOT NULL,
+    name character varying(255) DEFAULT ''::character varying NOT NULL,
+    flow json DEFAULT '{}'::json NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    "celularTeste" character varying(255) DEFAULT NULL::character varying,
+    "userId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "isDeleted" boolean DEFAULT false
+);
+
+
+ALTER TABLE public."ChatFlow" OWNER TO chatex;
+
+--
+-- TOC entry 263 (class 1259 OID 26698)
+-- Name: ChatFlow_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."ChatFlow_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."ChatFlow_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4071 (class 0 OID 0)
+-- Dependencies: 263
+-- Name: ChatFlow_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."ChatFlow_id_seq" OWNED BY public."ChatFlow".id;
+
+
+--
+-- TOC entry 269 (class 1259 OID 27483)
+-- Name: ChatFlows; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ChatFlows" (
+    "celularTeste" text
+);
+
+
+ALTER TABLE public."ChatFlows" OWNER TO chatex;
+
+--
+-- TOC entry 227 (class 1259 OID 26152)
+-- Name: ContactCustomFields; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ContactCustomFields" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    value character varying(255) NOT NULL,
+    "contactId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."ContactCustomFields" OWNER TO chatex;
+
+--
+-- TOC entry 226 (class 1259 OID 26151)
+-- Name: ContactCustomFields_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."ContactCustomFields_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."ContactCustomFields_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4072 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: ContactCustomFields_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."ContactCustomFields_id_seq" OWNED BY public."ContactCustomFields".id;
+
+
+--
+-- TOC entry 252 (class 1259 OID 26522)
+-- Name: ContactTags; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ContactTags" (
+    id integer NOT NULL,
+    "tagId" integer NOT NULL,
+    "contactId" integer NOT NULL,
+    "tenantId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."ContactTags" OWNER TO chatex;
+
+--
+-- TOC entry 251 (class 1259 OID 26521)
+-- Name: ContactTags_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."ContactTags_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."ContactTags_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4073 (class 0 OID 0)
+-- Dependencies: 251
+-- Name: ContactTags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."ContactTags_id_seq" OWNED BY public."ContactTags".id;
+
+
+--
+-- TOC entry 260 (class 1259 OID 26649)
+-- Name: ContactWallets; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ContactWallets" (
+    id integer NOT NULL,
+    "walletId" integer NOT NULL,
+    "contactId" integer NOT NULL,
+    "tenantId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."ContactWallets" OWNER TO chatex;
+
+--
+-- TOC entry 259 (class 1259 OID 26648)
+-- Name: ContactWallets_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."ContactWallets_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."ContactWallets_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4074 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: ContactWallets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."ContactWallets_id_seq" OWNED BY public."ContactWallets".id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 26093)
+-- Name: Contacts; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Contacts" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    number character varying(255) DEFAULT NULL::character varying,
+    "profilePicUrl" text DEFAULT NULL::character varying,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    email character varying(255) DEFAULT NULL::character varying,
+    "isGroup" boolean DEFAULT false NOT NULL,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    pushname character varying(255) DEFAULT NULL::character varying,
+    "isUser" boolean,
+    "isWAContact" boolean,
+    "telegramId" bigint,
+    "instagramPK" bigint,
+    "messengerId" text
+);
+
+
+ALTER TABLE public."Contacts" OWNER TO chatex;
+
+--
+-- TOC entry 219 (class 1259 OID 26092)
+-- Name: Contacts_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Contacts_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Contacts_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4075 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: Contacts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Contacts_id_seq" OWNED BY public."Contacts".id;
+
+
+--
+-- TOC entry 279 (class 1259 OID 37038)
+-- Name: ERPProviders; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ERPProviders" (
+    id integer NOT NULL,
+    "tenantId" integer NOT NULL,
+    "providerType" public."enum_ERPProviders_providerType" NOT NULL,
+    "apiKey" text NOT NULL,
+    "webhookSecret" text NOT NULL,
+    "webhookUrl" character varying(255) NOT NULL,
+    status public."enum_ERPProviders_status" DEFAULT 'inactive'::public."enum_ERPProviders_status" NOT NULL,
+    "errorMessage" text,
+    "lastSync" timestamp with time zone,
+    config json,
+    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public."ERPProviders" OWNER TO chatex;
+
+--
+-- TOC entry 278 (class 1259 OID 37037)
+-- Name: ERPProviders_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."ERPProviders_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."ERPProviders_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4076 (class 0 OID 0)
+-- Dependencies: 278
+-- Name: ERPProviders_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."ERPProviders_id_seq" OWNED BY public."ERPProviders".id;
+
+
+--
+-- TOC entry 291 (class 1259 OID 37293)
+-- Name: ErpProviders; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."ErpProviders" (
+    id integer NOT NULL,
+    "tenantId" integer NOT NULL,
+    "providerType" public."enum_ErpProviders_providerType" NOT NULL,
+    "apiKey" text NOT NULL,
+    "webhookSecret" text NOT NULL,
+    "webhookUrl" character varying(255),
+    status public."enum_ErpProviders_status" DEFAULT 'inactive'::public."enum_ErpProviders_status" NOT NULL,
+    "errorMessage" text,
+    "lastSync" timestamp with time zone,
+    config json,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."ErpProviders" OWNER TO chatex;
+
+--
+-- TOC entry 290 (class 1259 OID 37292)
+-- Name: ErpProviders_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."ErpProviders_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."ErpProviders_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4077 (class 0 OID 0)
+-- Dependencies: 290
+-- Name: ErpProviders_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."ErpProviders_id_seq" OWNED BY public."ErpProviders".id;
+
+
+--
+-- TOC entry 248 (class 1259 OID 26477)
+-- Name: FastReply; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."FastReply" (
+    id integer NOT NULL,
+    key character varying(255) NOT NULL,
+    message text NOT NULL,
+    "userId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."FastReply" OWNER TO chatex;
+
+--
+-- TOC entry 247 (class 1259 OID 26476)
+-- Name: FastReply_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."FastReply_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."FastReply_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4078 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: FastReply_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."FastReply_id_seq" OWNED BY public."FastReply".id;
+
+
+--
+-- TOC entry 270 (class 1259 OID 27494)
+-- Name: FastReplys; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."FastReplys" (
+);
+
+
+ALTER TABLE public."FastReplys" OWNER TO chatex;
+
+--
+-- TOC entry 262 (class 1259 OID 26672)
+-- Name: LogTickets; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."LogTickets" (
+    id integer NOT NULL,
+    "userId" integer,
+    "ticketId" integer NOT NULL,
+    "queueId" integer,
+    type character varying(255) NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."LogTickets" OWNER TO chatex;
+
+--
+-- TOC entry 261 (class 1259 OID 26671)
+-- Name: LogTickets_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."LogTickets_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."LogTickets_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4079 (class 0 OID 0)
+-- Dependencies: 261
+-- Name: LogTickets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."LogTickets_id_seq" OWNED BY public."LogTickets".id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 26123)
+-- Name: Messages; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Messages" (
+    id character varying(255) NOT NULL,
+    body text NOT NULL,
+    ack integer DEFAULT 0 NOT NULL,
+    read boolean DEFAULT false NOT NULL,
+    "mediaType" character varying(255),
+    "mediaUrl" character varying(255),
+    "ticketId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "fromMe" boolean DEFAULT false NOT NULL,
+    "isDeleted" boolean DEFAULT false NOT NULL,
+    "contactId" integer,
+    "quotedMsgId" character varying(255),
+    "timestamp" bigint,
+    "userId" integer,
+    "scheduleDate" timestamp with time zone,
+    "sendType" character varying(255) DEFAULT NULL::character varying,
+    "messageId" character varying(255) DEFAULT NULL::character varying,
+    status character varying(255) DEFAULT NULL::character varying,
+    "wabaMediaId" text,
+    "tenantId" integer,
+    "idFront" character varying(255) DEFAULT NULL::character varying,
+    edited text
+);
+
+
+ALTER TABLE public."Messages" OWNER TO chatex;
+
+--
+-- TOC entry 244 (class 1259 OID 26417)
+-- Name: MessagesOffLine; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."MessagesOffLine" (
+    id integer NOT NULL,
+    body text NOT NULL,
+    ack integer DEFAULT 0 NOT NULL,
+    read boolean DEFAULT false NOT NULL,
+    "mediaType" character varying(255),
+    "mediaUrl" character varying(255),
+    "userId" integer,
+    "ticketId" integer NOT NULL,
+    "fromMe" boolean DEFAULT false NOT NULL,
+    "isDeleted" boolean DEFAULT false NOT NULL,
+    "contactId" integer,
+    "quotedMsgId" character varying(255),
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."MessagesOffLine" OWNER TO chatex;
+
+--
+-- TOC entry 243 (class 1259 OID 26416)
+-- Name: MessagesOffLine_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."MessagesOffLine_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."MessagesOffLine_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4080 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: MessagesOffLine_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."MessagesOffLine_id_seq" OWNED BY public."MessagesOffLine".id;
+
+
+--
+-- TOC entry 285 (class 1259 OID 37103)
+-- Name: Permissions; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Permissions" (
+    id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    description text,
+    module character varying(50) NOT NULL,
+    action character varying(50) NOT NULL,
+    resource character varying(100) DEFAULT NULL::character varying,
+    "isSystem" boolean DEFAULT false NOT NULL,
+    "tenantId" integer NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public."Permissions" OWNER TO chatex;
+
+--
+-- TOC entry 284 (class 1259 OID 37102)
+-- Name: Permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Permissions_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Permissions_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4081 (class 0 OID 0)
+-- Dependencies: 284
+-- Name: Permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Permissions_id_seq" OWNED BY public."Permissions".id;
+
+
+--
+-- TOC entry 275 (class 1259 OID 36903)
+-- Name: Plans; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Plans" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    price numeric(10,2) NOT NULL,
+    limits jsonb,
+    features jsonb,
+    status public."enum_Plans_status" DEFAULT 'active'::public."enum_Plans_status",
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    currency character varying(3) DEFAULT 'BRL'::character varying,
+    description text,
+    billingcycle character varying(20) DEFAULT 'monthly'::character varying
+);
+
+
+ALTER TABLE public."Plans" OWNER TO chatex;
+
+--
+-- TOC entry 274 (class 1259 OID 36902)
+-- Name: Plans_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Plans_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Plans_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4082 (class 0 OID 0)
+-- Dependencies: 274
+-- Name: Plans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Plans_id_seq" OWNED BY public."Plans".id;
+
+
+--
+-- TOC entry 236 (class 1259 OID 26272)
+-- Name: Queues; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Queues" (
+    id integer NOT NULL,
+    queue character varying(255) NOT NULL,
+    "userId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    "tenantId" integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public."Queues" OWNER TO chatex;
+
+--
+-- TOC entry 235 (class 1259 OID 26271)
+-- Name: Queues_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Queues_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Queues_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4083 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: Queues_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Queues_id_seq" OWNED BY public."Queues".id;
+
+
+--
+-- TOC entry 289 (class 1259 OID 37257)
+-- Name: RolePermissions; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."RolePermissions" (
+    id integer NOT NULL,
+    roleid integer NOT NULL,
+    permissionid integer NOT NULL,
+    tenantid integer NOT NULL,
+    assignedby integer,
+    grantedat timestamp without time zone DEFAULT now() NOT NULL,
+    expiresat timestamp without time zone,
+    createdat timestamp without time zone DEFAULT now() NOT NULL,
+    updatedat timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public."RolePermissions" OWNER TO chatex;
+
+--
+-- TOC entry 288 (class 1259 OID 37256)
+-- Name: RolePermissions_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."RolePermissions_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."RolePermissions_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4084 (class 0 OID 0)
+-- Dependencies: 288
+-- Name: RolePermissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."RolePermissions_id_seq" OWNED BY public."RolePermissions".id;
+
+
+--
+-- TOC entry 283 (class 1259 OID 37083)
+-- Name: Roles; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Roles" (
+    id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    description text,
+    level integer DEFAULT 0 NOT NULL,
+    "isSystem" boolean DEFAULT false NOT NULL,
+    "tenantId" integer NOT NULL,
+    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public."Roles" OWNER TO chatex;
+
+--
+-- TOC entry 282 (class 1259 OID 37082)
+-- Name: Roles_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Roles_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Roles_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4085 (class 0 OID 0)
+-- Dependencies: 282
+-- Name: Roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Roles_id_seq" OWNED BY public."Roles".id;
+
+
+--
+-- TOC entry 216 (class 1259 OID 26076)
+-- Name: SequelizeMeta; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."SequelizeMeta" (
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public."SequelizeMeta" OWNER TO chatex;
+
+--
+-- TOC entry 228 (class 1259 OID 26168)
+-- Name: Settings; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Settings" (
+    key character varying(255) NOT NULL,
+    value text NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE public."Settings" OWNER TO chatex;
+
+--
+-- TOC entry 265 (class 1259 OID 26740)
+-- Name: Settings_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Settings_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Settings_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4086 (class 0 OID 0)
+-- Dependencies: 265
+-- Name: Settings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Settings_id_seq" OWNED BY public."Settings".id;
+
+
+--
+-- TOC entry 232 (class 1259 OID 26223)
+-- Name: StepsReply; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."StepsReply" (
+    id integer NOT NULL,
+    reply character varying(255) NOT NULL,
+    "idAutoReply" integer,
+    "userId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "initialStep" boolean DEFAULT false
+);
+
+
+ALTER TABLE public."StepsReply" OWNER TO chatex;
+
+--
+-- TOC entry 234 (class 1259 OID 26241)
+-- Name: StepsReplyActions; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."StepsReplyActions" (
+    id integer NOT NULL,
+    "stepReplyId" integer,
+    words character varying(255) NOT NULL,
+    action integer DEFAULT 0 NOT NULL,
+    "userId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "nextStepId" integer,
+    "queueId" integer,
+    "userIdDestination" integer,
+    "replyDefinition" character varying(255) DEFAULT NULL::character varying
+);
+
+
+ALTER TABLE public."StepsReplyActions" OWNER TO chatex;
+
+--
+-- TOC entry 233 (class 1259 OID 26240)
+-- Name: StepsReplyActions_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."StepsReplyActions_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."StepsReplyActions_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4087 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: StepsReplyActions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."StepsReplyActions_id_seq" OWNED BY public."StepsReplyActions".id;
+
+
+--
+-- TOC entry 231 (class 1259 OID 26222)
+-- Name: StepsReply_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."StepsReply_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."StepsReply_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4088 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: StepsReply_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."StepsReply_id_seq" OWNED BY public."StepsReply".id;
+
+
+--
+-- TOC entry 271 (class 1259 OID 27500)
+-- Name: StepsReplys; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."StepsReplys" (
+    "initialStep" boolean DEFAULT false
+);
+
+
+ALTER TABLE public."StepsReplys" OWNER TO chatex;
+
+--
+-- TOC entry 281 (class 1259 OID 37055)
+-- Name: Subscriptions; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Subscriptions" (
+    id integer NOT NULL,
+    "tenantId" integer NOT NULL,
+    "planId" integer NOT NULL,
+    "erpProviderId" integer,
+    "externalInvoiceId" text NOT NULL,
+    status public."enum_Subscriptions_status" DEFAULT 'pending'::public."enum_Subscriptions_status" NOT NULL,
+    amount numeric(10,2) NOT NULL,
+    "currentPeriodStart" timestamp with time zone NOT NULL,
+    "currentPeriodEnd" timestamp with time zone NOT NULL,
+    "autoRenew" boolean DEFAULT true NOT NULL,
+    "paidAt" timestamp with time zone,
+    "canceledAt" timestamp with time zone,
+    "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+    "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public."Subscriptions" OWNER TO chatex;
+
+--
+-- TOC entry 280 (class 1259 OID 37054)
+-- Name: Subscriptions_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Subscriptions_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Subscriptions_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4089 (class 0 OID 0)
+-- Dependencies: 280
+-- Name: Subscriptions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Subscriptions_id_seq" OWNED BY public."Subscriptions".id;
+
+
+--
+-- TOC entry 250 (class 1259 OID 26499)
+-- Name: Tags; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Tags" (
+    id integer NOT NULL,
+    tag character varying(255) NOT NULL,
+    "isActive" boolean DEFAULT true NOT NULL,
+    color character varying(255) NOT NULL,
+    "userId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."Tags" OWNER TO chatex;
+
+--
+-- TOC entry 249 (class 1259 OID 26498)
+-- Name: Tags_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Tags_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Tags_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4090 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: Tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Tags_id_seq" OWNED BY public."Tags".id;
+
+
+--
+-- TOC entry 277 (class 1259 OID 36915)
+-- Name: TenantPlans; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."TenantPlans" (
+    id integer NOT NULL,
+    "tenantId" integer NOT NULL,
+    "planId" integer NOT NULL,
+    status public."enum_TenantPlans_status" DEFAULT 'active'::public."enum_TenantPlans_status",
+    "subscriptionId" integer,
+    "currentPeriodStart" timestamp with time zone,
+    "currentPeriodEnd" timestamp with time zone,
+    "cancelAtPeriodEnd" boolean DEFAULT false,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."TenantPlans" OWNER TO chatex;
+
+--
+-- TOC entry 276 (class 1259 OID 36914)
+-- Name: TenantPlans_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."TenantPlans_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."TenantPlans_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4091 (class 0 OID 0)
+-- Dependencies: 276
+-- Name: TenantPlans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."TenantPlans_id_seq" OWNED BY public."TenantPlans".id;
+
+
+--
+-- TOC entry 240 (class 1259 OID 26334)
+-- Name: Tenants; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Tenants" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    description text,
+    cnpj character varying(255),
+    email character varying(255),
+    status public."enum_Tenants_status" DEFAULT 'active'::public."enum_Tenants_status" NOT NULL,
+    "ownerId" integer,
+    "maxUsers" integer NOT NULL,
+    "maxConnections" integer NOT NULL,
+    "businessHours" jsonb,
+    "messageBusinessHours" text,
+    "trialEndsAt" timestamp with time zone,
+    "suspendedAt" timestamp with time zone,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    owner_id integer
+);
+
+
+ALTER TABLE public."Tenants" OWNER TO chatex;
+
+--
+-- TOC entry 239 (class 1259 OID 26333)
+-- Name: Tenants_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Tenants_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Tenants_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4092 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: Tenants_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Tenants_id_seq" OWNED BY public."Tenants".id;
+
+
+--
+-- TOC entry 222 (class 1259 OID 26104)
+-- Name: Tickets; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Tickets" (
+    id integer NOT NULL,
+    status character varying(255) DEFAULT 'pending'::character varying NOT NULL,
+    "lastMessage" text,
+    "contactId" integer,
+    "userId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "whatsappId" integer,
+    "isGroup" boolean DEFAULT false NOT NULL,
+    "autoReplyId" integer,
+    "stepAutoReplyId" integer,
+    "queueId" integer,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "unreadMessages" integer,
+    answered boolean DEFAULT true,
+    channel character varying(255) DEFAULT 'whatsapp'::character varying,
+    "chatFlowId" integer,
+    "stepChatFlow" character varying(255) DEFAULT NULL::character varying,
+    "lastMessageAt" bigint,
+    "startedAttendanceAt" bigint,
+    "closedAt" bigint,
+    "isActiveDemand" boolean DEFAULT false NOT NULL,
+    "botRetries" integer DEFAULT 0 NOT NULL,
+    "lastInteractionBot" timestamp with time zone,
+    "apiConfig" jsonb,
+    "isFarewellMessage" boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public."Tickets" OWNER TO chatex;
+
+--
+-- TOC entry 221 (class 1259 OID 26103)
+-- Name: Tickets_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Tickets_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Tickets_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4093 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: Tickets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Tickets_id_seq" OWNED BY public."Tickets".id;
+
+
+--
+-- TOC entry 246 (class 1259 OID 26455)
+-- Name: UserMessagesLog; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."UserMessagesLog" (
+    id integer NOT NULL,
+    "messageId" character varying(255) DEFAULT NULL::character varying,
+    "userId" integer,
+    "ticketId" integer,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."UserMessagesLog" OWNER TO chatex;
+
+--
+-- TOC entry 245 (class 1259 OID 26454)
+-- Name: UserMessagesLog_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."UserMessagesLog_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."UserMessagesLog_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4094 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: UserMessagesLog_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."UserMessagesLog_id_seq" OWNED BY public."UserMessagesLog".id;
+
+
+--
+-- TOC entry 272 (class 1259 OID 27504)
+-- Name: UserMessagesLogs; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."UserMessagesLogs" (
+);
+
+
+ALTER TABLE public."UserMessagesLogs" OWNER TO chatex;
+
+--
+-- TOC entry 287 (class 1259 OID 37227)
+-- Name: UserRoles; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."UserRoles" (
+    id integer NOT NULL,
+    userid integer NOT NULL,
+    roleid integer NOT NULL,
+    tenantid integer NOT NULL,
+    assignedby integer,
+    expiresat timestamp without time zone,
+    isdefault boolean DEFAULT false NOT NULL,
+    createdat timestamp without time zone DEFAULT now() NOT NULL,
+    updatedat timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public."UserRoles" OWNER TO chatex;
+
+--
+-- TOC entry 286 (class 1259 OID 37226)
+-- Name: UserRoles_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."UserRoles_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."UserRoles_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4095 (class 0 OID 0)
+-- Dependencies: 286
+-- Name: UserRoles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."UserRoles_id_seq" OWNED BY public."UserRoles".id;
+
+
+--
+-- TOC entry 218 (class 1259 OID 26082)
+-- Name: Users; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Users" (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    "passwordHash" character varying(255) NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    profile character varying(255) DEFAULT 'admin'::character varying NOT NULL,
+    "tokenVersion" integer DEFAULT 0 NOT NULL,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    "lastLogin" timestamp with time zone,
+    "lastLogout" timestamp with time zone,
+    "isOnline" boolean DEFAULT false,
+    configs json,
+    "lastOnline" timestamp with time zone,
+    status character varying(255) DEFAULT 'offline'::character varying NOT NULL
+);
+
+
+ALTER TABLE public."Users" OWNER TO chatex;
+
+--
+-- TOC entry 238 (class 1259 OID 26289)
+-- Name: UsersQueues; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."UsersQueues" (
+    id integer NOT NULL,
+    "queueId" integer NOT NULL,
+    "userId" integer NOT NULL,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE public."UsersQueues" OWNER TO chatex;
+
+--
+-- TOC entry 237 (class 1259 OID 26288)
+-- Name: UsersQueues_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."UsersQueues_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."UsersQueues_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4096 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: UsersQueues_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."UsersQueues_id_seq" OWNED BY public."UsersQueues".id;
+
+
+--
+-- TOC entry 273 (class 1259 OID 27511)
+-- Name: UsersQueuess; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."UsersQueuess" (
+);
+
+
+ALTER TABLE public."UsersQueuess" OWNER TO chatex;
+
+--
+-- TOC entry 217 (class 1259 OID 26081)
+-- Name: Users_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Users_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Users_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4097 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: Users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Users_id_seq" OWNED BY public."Users".id;
+
+
+--
+-- TOC entry 225 (class 1259 OID 26143)
+-- Name: Whatsapps; Type: TABLE; Schema: public; Owner: chatex
+--
+
+CREATE TABLE public."Whatsapps" (
+    id integer NOT NULL,
+    session text,
+    qrcode text,
+    status character varying(255),
+    battery character varying(255),
+    plugged boolean,
+    "createdAt" timestamp with time zone NOT NULL,
+    "updatedAt" timestamp with time zone NOT NULL,
+    "isDefault" boolean DEFAULT false NOT NULL,
+    retries integer DEFAULT 0 NOT NULL,
+    "tenantId" integer DEFAULT 1 NOT NULL,
+    number character varying(255) DEFAULT NULL::character varying,
+    phone jsonb,
+    "isDeleted" boolean DEFAULT false,
+    "tokenTelegram" character varying(255) DEFAULT NULL::character varying,
+    type character varying(255) DEFAULT 'whatsapp'::character varying NOT NULL,
+    "instagramUser" character varying(255) DEFAULT NULL::character varying,
+    "instagramKey" character varying(255) DEFAULT NULL::character varying,
+    "tokenAPI" text,
+    "wabaBSP" character varying(255) DEFAULT NULL::character varying,
+    "tokenHook" text,
+    "isActive" boolean DEFAULT true NOT NULL,
+    "fbPageId" text,
+    "fbObject" jsonb,
+    "farewellMessage" text,
+    "chatFlowId" integer,
+    name character varying(255) NOT NULL,
+    wavoip text,
+    "queueId" integer
+);
+
+
+ALTER TABLE public."Whatsapps" OWNER TO chatex;
+
+--
+-- TOC entry 224 (class 1259 OID 26142)
+-- Name: Whatsapps_id_seq; Type: SEQUENCE; Schema: public; Owner: chatex
+--
+
+CREATE SEQUENCE public."Whatsapps_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public."Whatsapps_id_seq" OWNER TO chatex;
+
+--
+-- TOC entry 4098 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: Whatsapps_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: chatex
+--
+
+ALTER SEQUENCE public."Whatsapps_id_seq" OWNED BY public."Whatsapps".id;
+
+
+--
+-- TOC entry 3550 (class 2604 OID 26205)
+-- Name: AutoReply id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReply" ALTER COLUMN id SET DEFAULT nextval('public."AutoReply_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3566 (class 2604 OID 26400)
+-- Name: AutoReplyLogs id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReplyLogs" ALTER COLUMN id SET DEFAULT nextval('public."AutoReplyLogs_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3586 (class 2604 OID 26575)
+-- Name: CampaignContacts id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."CampaignContacts" ALTER COLUMN id SET DEFAULT nextval('public."CampaignContacts_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3580 (class 2604 OID 26547)
+-- Name: Campaigns id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Campaigns" ALTER COLUMN id SET DEFAULT nextval('public."Campaigns_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3604 (class 2604 OID 26702)
+-- Name: ChatFlow id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ChatFlow" ALTER COLUMN id SET DEFAULT nextval('public."ChatFlow_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3547 (class 2604 OID 26155)
+-- Name: ContactCustomFields id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactCustomFields" ALTER COLUMN id SET DEFAULT nextval('public."ContactCustomFields_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3579 (class 2604 OID 26525)
+-- Name: ContactTags id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactTags" ALTER COLUMN id SET DEFAULT nextval('public."ContactTags_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3602 (class 2604 OID 26652)
+-- Name: ContactWallets id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactWallets" ALTER COLUMN id SET DEFAULT nextval('public."ContactWallets_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3510 (class 2604 OID 26096)
+-- Name: Contacts id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Contacts" ALTER COLUMN id SET DEFAULT nextval('public."Contacts_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3619 (class 2604 OID 37041)
+-- Name: ERPProviders id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ERPProviders" ALTER COLUMN id SET DEFAULT nextval('public."ERPProviders_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3646 (class 2604 OID 37296)
+-- Name: ErpProviders id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ErpProviders" ALTER COLUMN id SET DEFAULT nextval('public."ErpProviders_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3574 (class 2604 OID 26480)
+-- Name: FastReply id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."FastReply" ALTER COLUMN id SET DEFAULT nextval('public."FastReply_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3603 (class 2604 OID 26675)
+-- Name: LogTickets id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."LogTickets" ALTER COLUMN id SET DEFAULT nextval('public."LogTickets_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3567 (class 2604 OID 26420)
+-- Name: MessagesOffLine id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."MessagesOffLine" ALTER COLUMN id SET DEFAULT nextval('public."MessagesOffLine_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3633 (class 2604 OID 37106)
+-- Name: Permissions id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Permissions" ALTER COLUMN id SET DEFAULT nextval('public."Permissions_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3612 (class 2604 OID 36906)
+-- Name: Plans id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Plans" ALTER COLUMN id SET DEFAULT nextval('public."Plans_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3560 (class 2604 OID 26275)
+-- Name: Queues id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Queues" ALTER COLUMN id SET DEFAULT nextval('public."Queues_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3642 (class 2604 OID 37260)
+-- Name: RolePermissions id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."RolePermissions" ALTER COLUMN id SET DEFAULT nextval('public."RolePermissions_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3628 (class 2604 OID 37086)
+-- Name: Roles id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Roles" ALTER COLUMN id SET DEFAULT nextval('public."Roles_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3549 (class 2604 OID 26741)
+-- Name: Settings id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Settings" ALTER COLUMN id SET DEFAULT nextval('public."Settings_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3555 (class 2604 OID 26226)
+-- Name: StepsReply id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReply" ALTER COLUMN id SET DEFAULT nextval('public."StepsReply_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3557 (class 2604 OID 26244)
+-- Name: StepsReplyActions id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions" ALTER COLUMN id SET DEFAULT nextval('public."StepsReplyActions_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3623 (class 2604 OID 37058)
+-- Name: Subscriptions id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Subscriptions" ALTER COLUMN id SET DEFAULT nextval('public."Subscriptions_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3576 (class 2604 OID 26502)
+-- Name: Tags id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tags" ALTER COLUMN id SET DEFAULT nextval('public."Tags_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3616 (class 2604 OID 36918)
+-- Name: TenantPlans id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."TenantPlans" ALTER COLUMN id SET DEFAULT nextval('public."TenantPlans_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3564 (class 2604 OID 26337)
+-- Name: Tenants id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tenants" ALTER COLUMN id SET DEFAULT nextval('public."Tenants_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3517 (class 2604 OID 26107)
+-- Name: Tickets id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets" ALTER COLUMN id SET DEFAULT nextval('public."Tickets_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3572 (class 2604 OID 26458)
+-- Name: UserMessagesLog id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserMessagesLog" ALTER COLUMN id SET DEFAULT nextval('public."UserMessagesLog_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3638 (class 2604 OID 37230)
+-- Name: UserRoles id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserRoles" ALTER COLUMN id SET DEFAULT nextval('public."UserRoles_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3504 (class 2604 OID 26085)
+-- Name: Users id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Users" ALTER COLUMN id SET DEFAULT nextval('public."Users_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3563 (class 2604 OID 26292)
+-- Name: UsersQueues id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UsersQueues" ALTER COLUMN id SET DEFAULT nextval('public."UsersQueues_id_seq"'::regclass);
+
+
+--
+-- TOC entry 3535 (class 2604 OID 26146)
+-- Name: Whatsapps id; Type: DEFAULT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Whatsapps" ALTER COLUMN id SET DEFAULT nextval('public."Whatsapps_id_seq"'::regclass);
+
+
+--
+-- TOC entry 4024 (class 0 OID 26595)
+-- Dependencies: 257
+-- Data for Name: ApiConfigs; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4025 (class 0 OID 26622)
+-- Dependencies: 258
+-- Data for Name: ApiMessages; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 3997 (class 0 OID 26202)
+-- Dependencies: 230
+-- Data for Name: AutoReply; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4009 (class 0 OID 26397)
+-- Dependencies: 242
+-- Data for Name: AutoReplyLogs; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4033 (class 0 OID 27472)
+-- Dependencies: 266
+-- Data for Name: AutoReplyLogss; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4034 (class 0 OID 27475)
+-- Dependencies: 267
+-- Data for Name: AutoReplys; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4023 (class 0 OID 26572)
+-- Dependencies: 256
+-- Data for Name: CampaignContacts; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4035 (class 0 OID 27480)
+-- Dependencies: 268
+-- Data for Name: CampaignContactss; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4021 (class 0 OID 26544)
+-- Dependencies: 254
+-- Data for Name: Campaigns; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4031 (class 0 OID 26699)
+-- Dependencies: 264
+-- Data for Name: ChatFlow; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."ChatFlow" VALUES (2, 'teste', '{"name":"teste","nodeList":[{"id":"start","name":"Início","type":"start","left":"26px","top":"100px","ico":"mdi-play","viewOnly":true,"status":"success","style":{}},{"id":"configurations","name":"Configurações","type":"configurations","left":"340px","top":"100px","viewOnly":true,"ico":"mdi-alert-circle-outline","configurations":{"notOptionsSelectMessage":{"message":"","stepReturn":"A"},"notResponseMessage":{"time":10,"type":1,"destiny":""},"welcomeMessage":{"message":""},"maxRetryBotMessage":{"number":3,"type":1,"destiny":""}}},{"id":"nodeC","name":"Boas vindas!","type":"node","left":"26px","top":"301px","interactions":[],"conditions":[],"actions":[]}],"lineList":[{"from":"start","to":"nodeC","paintStyle":{"strokeWidth":3,"stroke":"#8db1dd"}}],"action":0,"userId":6,"celularTeste":"51990104506","isActive":true,"id":null}', true, NULL, 6, 2, '2025-12-19 14:47:45.478+00', '2025-12-19 14:47:45.478+00', false);
+
+
+--
+-- TOC entry 4036 (class 0 OID 27483)
+-- Dependencies: 269
+-- Data for Name: ChatFlows; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 3994 (class 0 OID 26152)
+-- Dependencies: 227
+-- Data for Name: ContactCustomFields; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4019 (class 0 OID 26522)
+-- Dependencies: 252
+-- Data for Name: ContactTags; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4027 (class 0 OID 26649)
+-- Dependencies: 260
+-- Data for Name: ContactWallets; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 3987 (class 0 OID 26093)
+-- Dependencies: 220
+-- Data for Name: Contacts; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4046 (class 0 OID 37038)
+-- Dependencies: 279
+-- Data for Name: ERPProviders; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."ERPProviders" VALUES (1, 1, 'vendaerp', 'vendaerp_api_key_tenant_1', 'webhook_secret_1', 'https://tenant1.example.com/webhook', 'active', NULL, NULL, NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+INSERT INTO public."ERPProviders" VALUES (2, 2, 'bling', 'bling_api_key_tenant_2', 'webhook_secret_2', 'https://tenant2.example.com/webhook', 'active', NULL, NULL, NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+INSERT INTO public."ERPProviders" VALUES (3, 3, 'omie', 'omie_api_key_tenant_3', 'webhook_secret_3', 'https://tenant3.example.com/webhook', 'inactive', NULL, NULL, NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+INSERT INTO public."ERPProviders" VALUES (4, 4, 'mercadopago', 'mp_api_key_tenant_4', 'webhook_secret_4', 'https://tenant4.example.com/webhook', 'active', NULL, NULL, NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+
+
+--
+-- TOC entry 4058 (class 0 OID 37293)
+-- Dependencies: 291
+-- Data for Name: ErpProviders; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4015 (class 0 OID 26477)
+-- Dependencies: 248
+-- Data for Name: FastReply; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4037 (class 0 OID 27494)
+-- Dependencies: 270
+-- Data for Name: FastReplys; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4029 (class 0 OID 26672)
+-- Dependencies: 262
+-- Data for Name: LogTickets; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 3990 (class 0 OID 26123)
+-- Dependencies: 223
+-- Data for Name: Messages; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4011 (class 0 OID 26417)
+-- Dependencies: 244
+-- Data for Name: MessagesOffLine; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4052 (class 0 OID 37103)
+-- Dependencies: 285
+-- Data for Name: Permissions; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Permissions" VALUES (43, 'user:create', 'Criar usuários', 'users', 'create', 'users', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (44, 'user:read', 'Visualizar usuários', 'users', 'read', 'users', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (45, 'user:update', 'Atualizar usuários', 'users', 'update', 'users', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (46, 'user:delete', 'Excluir usuários', 'users', 'delete', 'users', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (47, 'role:create', 'Criar papéis', 'roles', 'create', 'roles', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (48, 'role:read', 'Visualizar papéis', 'roles', 'read', 'roles', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (49, 'role:update', 'Atualizar papéis', 'roles', 'update', 'roles', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (50, 'role:delete', 'Excluir papéis', 'roles', 'delete', 'roles', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (51, 'ticket:create', 'Criar tickets', 'tickets', 'create', 'tickets', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (52, 'ticket:read', 'Visualizar tickets', 'tickets', 'read', 'tickets', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (53, 'ticket:update', 'Atualizar tickets', 'tickets', 'update', 'tickets', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (54, 'ticket:delete', 'Excluir tickets', 'tickets', 'delete', 'tickets', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (55, 'message:send', 'Enviar mensagens', 'messages', 'send', 'messages', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (56, 'message:read', 'Visualizar mensagens', 'messages', 'read', 'messages', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (57, 'message:delete', 'Excluir mensagens', 'messages', 'delete', 'messages', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (58, 'whatsapp:create', 'Criar conexões WhatsApp', 'whatsapp', 'create', 'whatsapp', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (59, 'whatsapp:read', 'Visualizar conexões WhatsApp', 'whatsapp', 'read', 'whatsapp', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (60, 'whatsapp:update', 'Atualizar conexões WhatsApp', 'whatsapp', 'update', 'whatsapp', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (61, 'whatsapp:delete', 'Excluir conexões WhatsApp', 'whatsapp', 'delete', 'whatsapp', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+INSERT INTO public."Permissions" VALUES (62, 'admin:all', 'Acesso administrativo completo', 'admin', 'all', 'admin', true, 3, '2025-12-21 00:26:32.24626+00', '2025-12-21 00:26:32.24626+00');
+
+
+--
+-- TOC entry 4042 (class 0 OID 36903)
+-- Dependencies: 275
+-- Data for Name: Plans; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Plans" VALUES (2, 'Starter', 29.90, '{"users": 1, "contacts": 500, "whatsapp_accounts": 2, "messages_per_month": 1000}', '{"auto_replies": true, "custom_fields": false, "basic_analytics": true, "whatsapp_integration": true}', 'active', '2025-12-21 00:10:02.262409+00', '2025-12-21 00:10:02.262409+00', 'BRL', 'Plano ideal para pequenos negócios', 'monthly');
+INSERT INTO public."Plans" VALUES (3, 'Professional', 79.90, '{"users": 3, "contacts": 2500, "whatsapp_accounts": 5, "messages_per_month": 5000}', '{"api_access": true, "auto_replies": true, "integrations": true, "custom_fields": true, "advanced_analytics": true, "whatsapp_integration": true}', 'active', '2025-12-21 00:10:02.262409+00', '2025-12-21 00:10:02.262409+00', 'BRL', 'Plano completo para empresas em crescimento', 'monthly');
+INSERT INTO public."Plans" VALUES (4, 'Enterprise', 199.90, '{"users": 10, "contacts": 10000, "whatsapp_accounts": 15, "messages_per_month": 15000}', '{"api_access": true, "white_label": true, "auto_replies": true, "integrations": true, "custom_fields": true, "priority_support": true, "advanced_analytics": true, "whatsapp_integration": true}', 'active', '2025-12-21 00:10:02.262409+00', '2025-12-21 00:10:02.262409+00', 'BRL', 'Solução empresarial com recursos ilimitados', 'monthly');
+INSERT INTO public."Plans" VALUES (5, 'starter', 99.00, '{"users": 2, "storageGB": 5, "messagesPerMonth": 1000, "whatsappSessions": 1}', '{"api": false, "telegram": false, "webhooks": false, "whatsapp": true, "instagram": false, "messenger": false}', 'active', '2025-12-21 02:18:26.758+00', '2025-12-21 02:18:26.758+00', 'BRL', NULL, 'monthly');
+INSERT INTO public."Plans" VALUES (6, 'professional', 399.00, '{"users": 10, "storageGB": 50, "messagesPerMonth": 10000, "whatsappSessions": 5}', '{"api": true, "telegram": true, "webhooks": true, "whatsapp": true, "instagram": true, "messenger": false}', 'active', '2025-12-21 02:18:26.927+00', '2025-12-21 02:18:26.927+00', 'BRL', NULL, 'monthly');
+INSERT INTO public."Plans" VALUES (7, 'enterprise', 999.00, '{"users": 50, "storageGB": 200, "messagesPerMonth": 100000, "whatsappSessions": 999}', '{"api": true, "sla": "99.9%", "support": "priority", "telegram": true, "webhooks": true, "whatsapp": true, "instagram": true, "messenger": true}', 'active', '2025-12-21 02:18:27.018+00', '2025-12-21 02:18:27.018+00', 'BRL', NULL, 'monthly');
+
+
+--
+-- TOC entry 4003 (class 0 OID 26272)
+-- Dependencies: 236
+-- Data for Name: Queues; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Queues" VALUES (1, 'Espera', 6, '2025-12-20 01:23:22.146+00', '2025-12-20 01:23:22.146+00', true, 2);
+
+
+--
+-- TOC entry 4056 (class 0 OID 37257)
+-- Dependencies: 289
+-- Data for Name: RolePermissions; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."RolePermissions" VALUES (56, 5, 43, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (57, 5, 44, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (58, 5, 45, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (59, 5, 46, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (60, 5, 47, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (61, 5, 48, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (62, 5, 49, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (63, 5, 50, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (64, 5, 51, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (65, 5, 52, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (66, 5, 53, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (67, 5, 54, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (68, 5, 55, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (69, 5, 56, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (70, 5, 57, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (71, 5, 58, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (72, 5, 59, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (73, 5, 60, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (74, 5, 61, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (75, 5, 62, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (76, 6, 43, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (77, 6, 44, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (78, 6, 45, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (79, 6, 46, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (80, 6, 47, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (81, 6, 48, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (82, 6, 49, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (83, 6, 50, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (84, 6, 51, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (85, 6, 52, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (86, 6, 53, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (87, 6, 54, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (88, 6, 55, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (89, 6, 56, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (90, 6, 57, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (91, 6, 58, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (92, 6, 59, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (93, 6, 60, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (94, 6, 61, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (95, 7, 44, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (96, 7, 45, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (97, 7, 48, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (98, 7, 49, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (99, 7, 52, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (100, 7, 53, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (101, 7, 55, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (102, 7, 56, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (103, 7, 59, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (104, 7, 60, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (105, 8, 52, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (106, 8, 53, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (107, 8, 55, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (108, 8, 56, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+INSERT INTO public."RolePermissions" VALUES (109, 8, 59, 1, NULL, '2025-12-21 00:31:41.858541', NULL, '2025-12-21 00:31:41.858541', '2025-12-21 00:31:41.858541');
+
+
+--
+-- TOC entry 4050 (class 0 OID 37083)
+-- Dependencies: 283
+-- Data for Name: Roles; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Roles" VALUES (5, 'Super Admin', 'Administrador com acesso total ao sistema', 1, true, 1, '2025-12-21 00:28:38.504143+00', '2025-12-21 00:28:38.504143+00');
+INSERT INTO public."Roles" VALUES (6, 'Admin', 'Administrador de tenant', 2, true, 1, '2025-12-21 00:28:38.504143+00', '2025-12-21 00:28:38.504143+00');
+INSERT INTO public."Roles" VALUES (7, 'Supervisor', 'Supervisor de atendimento', 3, true, 1, '2025-12-21 00:28:38.504143+00', '2025-12-21 00:28:38.504143+00');
+INSERT INTO public."Roles" VALUES (8, 'Agente', 'Agente de atendimento', 4, true, 1, '2025-12-21 00:28:38.504143+00', '2025-12-21 00:28:38.504143+00');
+
+
+--
+-- TOC entry 3983 (class 0 OID 26076)
+-- Dependencies: 216
+-- Data for Name: SequelizeMeta; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."SequelizeMeta" VALUES ('20200717133438-create-users.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200717144403-create-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200717145643-create-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200717151645-create-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200717170223-create-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200723200315-create-contacts-custom-fields.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200723202116-add-email-field-to-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200730153237-remove-user-association-from-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200730153545-add-fromMe-to-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200813114236-change-ticket-lastMessage-column-type.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200901235509-add-profile-column-to-users.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200903215941-create-settings.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200906122228-add-name-default-field-to-whatsapp.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200906155658-add-whatsapp-field-to-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200919124112-update-default-column-name-on-whatsappp.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200927220708-add-isDeleted-column-to-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200929145451-add-user-tokenVersion-column.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200930162323-add-isGroup-column-to-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200930194808-add-isGroup-column-to-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201004150008-add-contactId-column-to-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201004155719-add-vcardContactId-column-to-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201004955719-remove-vcardContactId-column-to-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201026215410-add-retries-to-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201028124427-add-quoted-msg-to-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201116231228-create-table-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201117004159-alter-column-words-table-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201118152407-create-table-steps-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201118180019-create-table-steps-reply-action.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201119135937-alter-colum-and-table-name-table-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201119162119-add-columns-table-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201119163016-add-column-userIdDestination-table-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201119163017-add-column-autoReplyId-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201119163018-add-column-stepAutoReplyId-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121013843-add-column-nextStep-table-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121014717-remove-column-reply-table-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121015611-alter-column-nextStep-table-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121030331-add-column-queue-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121150002-add-column-initialStep-table-steps-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121151458-remove-column-initialStep-table-steps-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201121151502-add-column-correct-initialStep-table-steps-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201123160210-add-column-old-step-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201123172529-remove-column-old-step-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201204203210-remove-columns-table-steps-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201207215725-create-table-queues.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201207222347-alter-column-queue-table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201208180734-create-table-users-queues.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201208222701-alter-column-queue-table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201209001354-add-column-is-active-table-queues.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201210014253-add-column-celular-is-active-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201210022919-alter-columns-queue-userIdDestination-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201212040929-add-columns-replyDefinition-table-steps-reply-actions.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201220234957-create-table-tenant.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201221010713-add-tenantId-all-tables.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201222035938-add-contraint-contato-number-tenantId.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201222041830-remove-contraint-contacts-number-key.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201226152811-add-number-phone-table-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201229205500-add-column-isDeleted-table-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201230151109-create-table-record-auto-reply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210112195446-add-columns-pushname__isUser__isWAContact.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210113001629-add-columns-unreadMessages-to-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210113145013-add-column-timestamp-to-Messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210123165336-create-table-messageOffLine.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210125180503-add-column-userId-to-table-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210126144647-create-table-UserMessagesLog.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210202160551-alter-primarykey-settings.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210202163058-delete-constraite-primarykey-settings.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210206001325-alter-column-email-table-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210207131524-create-table-fastReply.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210209030321-add-column-tokenTelegram-table-whatsapp.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210209193520-add-column-type-table-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210219213513-create-table-tags.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210219213514-create-constraint-table-tags.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210220004040-create-table-tags-contact.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210220180824-add-column-businessHours-to-tenants.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210220180935-add-column-messageBusinessHours-to-tenants.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210227000928-create-table-campaign.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210227021721-create-table-campaign-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210308153511-create-extension-uuid-ossp-postgres.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210308174543-create-table-ApiConfigs.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210309200505-create-table-ApiMessages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210316015754-add-column-mediaUrl-table-ApiMessages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210719011137-add-columns-status-scheduleDate--table-Message.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210721022925-copy-rows-field_id-to-messageId_table-message.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210721052241-drop-reference-quotedMsgId-table-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210727030857-add-columns-isOnline_lastLogin-table-users.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210727193355-create-table-wallets-contact.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210810043718-add-column-configs-table-users.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210814012545-add-column-answered-table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20210815021807-create-table-LogTickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211115225207-add-telegramId-table-contact.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211116005230-add-column-channel-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211116011624-alter-column-type-table-whatsapp.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211126182602-add-table-chatFlow.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211129152556-alter-columns-table-ticket.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211203014144-add-columns-instagram-table-contact.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211203030434-alter-columns-profilePicUrl-table-contact.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211203142749-alter-columns-timestamp-table-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211203201930-alter-columns-instagramPK-table-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211204211026-remove-column-closedAt-table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211222004728-add-colum-wabaApiKey-table-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211227160721-add-colum-isActive-table-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20220101191958-add-colum-tenantId-table-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20220107020301-rename-colum-wabaKeyHook-table-whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20220108003843-add-colum-messengerId-table-contacts.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20240522000001-alter_table_tenant.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211204211101-add-columns-startAttendanceAt_lastMessageAt-table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211205004359-add-columns-isActiveDemand-table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211217140835-add-columns_botRetry_lastBotInteraction_table-tickets.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211222004247-add-colum-wabaMediaId-table-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211209174149-add-columns-instagramUser_instagramPassword-table-Whatsapps.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211212200504-add-column-id-table-settings.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211214214935-add-column-lastOnline-table-users.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20211215211539-add-column-status-table-users.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20220111160338-add-colum-fbPageId-table-whatsapp.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20220824192600-alter_table_ticket_add_apiConfig.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20220829163612-alter_table_apiconfigs_add_authToken.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20221108013747-alter_table_apiconfigs_edit_id_default_value.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20221108014456-alter_table_ApiMessages_edit_id_default_value.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20221113222841-alter_table_messages_add_column_idFront.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20221215203854-alter_connections_from_destryed_to_disconnected.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230320063333-add-isDeleted-to-chatFlow.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230425153434-create-contacts_number_tenantId.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230427013742-alter_table_whatsapps_add_farewellMessage.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230427022348-alter_table_tickets_add_isFarewellMessage.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230520005335-alter_table_Whatsapps_add_chatFlowId.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230620005335-add-column-tenant-add-limit-usercon.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230711161553-alter_table_campaign_add_delay.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20230712040242-query_create_settings_tenants.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20240519000001-add-colum-edited-table-messages.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20201221013617-add-name-table-tenants.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20200904220257-add-name-to-whatsapp.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20250101000000-create-billing-tables.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20250101000001-create-billing-and-rbac-tables.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20250101000005-add-tenantId-to-roles');
+INSERT INTO public."SequelizeMeta" VALUES ('20250101000005-add-tenantId-to-roles.js');
+INSERT INTO public."SequelizeMeta" VALUES ('20250101000006-create-table-erp-providers.js');
+
+
+--
+-- TOC entry 3995 (class 0 OID 26168)
+-- Dependencies: 228
+-- Data for Name: Settings; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Settings" VALUES ('userCreation', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 1);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 2);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 3);
+INSERT INTO public."Settings" VALUES ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 4);
+INSERT INTO public."Settings" VALUES ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 5);
+INSERT INTO public."Settings" VALUES ('botTicketActive', '3', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 6);
+INSERT INTO public."Settings" VALUES ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 7);
+INSERT INTO public."Settings" VALUES ('userCreation', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 8);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 9);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 10);
+INSERT INTO public."Settings" VALUES ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 11);
+INSERT INTO public."Settings" VALUES ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 12);
+INSERT INTO public."Settings" VALUES ('botTicketActive', '3', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 13);
+INSERT INTO public."Settings" VALUES ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 14);
+INSERT INTO public."Settings" VALUES ('userCreation', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 15);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 16);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 17);
+INSERT INTO public."Settings" VALUES ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 18);
+INSERT INTO public."Settings" VALUES ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 19);
+INSERT INTO public."Settings" VALUES ('botTicketActive', '3', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 20);
+INSERT INTO public."Settings" VALUES ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 21);
+INSERT INTO public."Settings" VALUES ('userCreation', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 22);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 23);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 24);
+INSERT INTO public."Settings" VALUES ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 25);
+INSERT INTO public."Settings" VALUES ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 26);
+INSERT INTO public."Settings" VALUES ('botTicketActive', '3', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 27);
+INSERT INTO public."Settings" VALUES ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 28);
+INSERT INTO public."Settings" VALUES ('userCreation', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 29);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 30);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 31);
+INSERT INTO public."Settings" VALUES ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 32);
+INSERT INTO public."Settings" VALUES ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 33);
+INSERT INTO public."Settings" VALUES ('botTicketActive', '3', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 34);
+INSERT INTO public."Settings" VALUES ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 35);
+INSERT INTO public."Settings" VALUES ('userCreation', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 36);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 37);
+INSERT INTO public."Settings" VALUES ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 38);
+INSERT INTO public."Settings" VALUES ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 39);
+INSERT INTO public."Settings" VALUES ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 40);
+INSERT INTO public."Settings" VALUES ('botTicketActive', '3', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 41);
+INSERT INTO public."Settings" VALUES ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 1, 42);
+
+
+--
+-- TOC entry 3999 (class 0 OID 26223)
+-- Dependencies: 232
+-- Data for Name: StepsReply; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4001 (class 0 OID 26241)
+-- Dependencies: 234
+-- Data for Name: StepsReplyActions; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4038 (class 0 OID 27500)
+-- Dependencies: 271
+-- Data for Name: StepsReplys; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4048 (class 0 OID 37055)
+-- Dependencies: 281
+-- Data for Name: Subscriptions; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Subscriptions" VALUES (1, 1, 2, 1, 'INV-2025-001', 'active', 29.90, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', true, '2025-12-21 00:12:27.069575+00', NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+INSERT INTO public."Subscriptions" VALUES (2, 2, 3, 2, 'INV-2025-002', 'active', 79.90, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', true, '2025-12-21 00:12:27.069575+00', NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+INSERT INTO public."Subscriptions" VALUES (3, 3, 4, 3, 'INV-2025-003', 'active', 199.90, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', true, '2025-12-21 00:12:27.069575+00', NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+INSERT INTO public."Subscriptions" VALUES (4, 4, 2, 4, 'INV-2025-004', 'active', 29.90, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', true, '2025-12-21 00:12:27.069575+00', NULL, '2025-12-21 00:12:27.069575+00', '2025-12-21 00:12:27.069575+00');
+
+
+--
+-- TOC entry 4017 (class 0 OID 26499)
+-- Dependencies: 250
+-- Data for Name: Tags; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4044 (class 0 OID 36915)
+-- Dependencies: 277
+-- Data for Name: TenantPlans; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."TenantPlans" VALUES (1, 1, 2, 'active', NULL, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', false, '2025-12-21 00:11:50.051853+00', '2025-12-21 00:11:50.051853+00');
+INSERT INTO public."TenantPlans" VALUES (2, 2, 3, 'active', NULL, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', false, '2025-12-21 00:11:50.051853+00', '2025-12-21 00:11:50.051853+00');
+INSERT INTO public."TenantPlans" VALUES (3, 3, 4, 'active', NULL, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', false, '2025-12-21 00:11:50.051853+00', '2025-12-21 00:11:50.051853+00');
+INSERT INTO public."TenantPlans" VALUES (4, 4, 2, 'active', NULL, '2025-12-01 00:00:00+00', '2025-12-31 00:00:00+00', false, '2025-12-21 00:11:50.051853+00', '2025-12-21 00:11:50.051853+00');
+
+
+--
+-- TOC entry 4007 (class 0 OID 26334)
+-- Dependencies: 240
+-- Data for Name: Tenants; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Tenants" VALUES (3, 'Empresa Padrão', 'Tenant criado automaticamente', '00.000.000/0000-00', 'admin@empresa-padrao.com', 'active', NULL, 10, 5, '[{"day": 0, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Domingo"}, {"day": 1, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Segunda-Feira"}, {"day": 2, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Terça-Feira"}, {"day": 3, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quarta-Feira"}, {"day": 4, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quinta-Feira"}, {"day": 5, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sexta-Feira"}, {"day": 6, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sábado"}]', 'Olá! Fantástico receber seu contato! No momento estamos ausentes e não poderemos lhe atender, mas vamos priorizar seu atendimento e retornaremos logo mais. Agradecemos muito o contato.', NULL, NULL, '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', NULL);
+INSERT INTO public."Tenants" VALUES (1, 'Empresa Padrão', 'Tenant criado automaticamente', '00.000.000/0000-00', 'admin@empresa-padrao.com', 'active', NULL, 10, 5, '[{"day": 0, "hr1": "09:00", "hr2": "13:00", "hr3": "14:00", "hr4": "17:00", "type": "O", "label": "Domingo"}, {"day": 1, "hr1": "08:00", "hr2": "12:00", "hr3": "13:00", "hr4": "18:00", "type": "O", "label": "Segunda-Feira"}, {"day": 2, "hr1": "08:00", "hr2": "12:00", "hr3": "13:00", "hr4": "18:00", "type": "O", "label": "Terça-Feira"}, {"day": 3, "hr1": "08:00", "hr2": "12:00", "hr3": "13:00", "hr4": "18:00", "type": "O", "label": "Quarta-Feira"}, {"day": 4, "hr1": "08:00", "hr2": "12:00", "hr3": "13:00", "hr4": "18:00", "type": "O", "label": "Quinta-Feira"}, {"day": 5, "hr1": "08:00", "hr2": "12:00", "hr3": "13:00", "hr4": "17:00", "type": "O", "label": "Sexta-Feira"}, {"day": 6, "hr1": "09:00", "hr2": "13:00", "hr3": null, "hr4": null, "type": "O", "label": "Sábado"}]', 'Olá! Recebemos sua mensagem fora do nosso horário de atendimento. Nosso horário comercial é de Segunda a Sexta, das 08:00 às 18:00. Retornaremos seu contato no próximo dia útil. Obrigado pela compreensão!', NULL, NULL, '2021-03-10 17:28:29+00', '2025-12-20 03:03:06.268385+00', NULL);
+INSERT INTO public."Tenants" VALUES (2, 'Empresa Padrão', 'Tenant criado automaticamente', '00.000.000/0000-00', 'admin@empresa-padrao.com', 'active', NULL, 10, 5, '[{"day": 0, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Domingo"}]', 'Olá! Fantástico receber seu contato! No momento estamos ausentes e não poderemos lhe atender, mas vamos priorizar seu atendimento e retornaremos logo mais. Agradecemos muito o contato.', NULL, NULL, '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', NULL);
+INSERT INTO public."Tenants" VALUES (4, 'Empresa Padrão', 'Tenant criado automaticamente', '00.000.000/0000-00', 'admin@empresa-padrao.com', 'active', NULL, 10, 5, '[{"day": 0, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Domingo"}, {"day": 1, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Segunda-Feira"}, {"day": 2, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Terça-Feira"}, {"day": 3, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quarta-Feira"}, {"day": 4, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quinta-Feira"}, {"day": 5, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sexta-Feira"}, {"day": 6, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sábado"}]', 'Olá! Fantástico receber seu contato! No momento estamos ausentes e não poderemos lhe atender, mas vamos priorizar seu atendimento e retornaremos logo mais. Agradecemos muito o contato.', NULL, NULL, '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', NULL);
+INSERT INTO public."Tenants" VALUES (5, 'Empresa Padrão', 'Tenant criado automaticamente', '00.000.000/0000-00', 'admin@empresa-padrao.com', 'active', NULL, 10, 5, '[{"day": 0, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Domingo"}, {"day": 1, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Segunda-Feira"}, {"day": 2, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Terça-Feira"}, {"day": 3, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quarta-Feira"}, {"day": 4, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quinta-Feira"}, {"day": 5, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sexta-Feira"}, {"day": 6, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sábado"}]', 'Olá! Fantástico receber seu contato! No momento estamos ausentes e não poderemos lhe atender, mas vamos priorizar seu atendimento e retornaremos logo mais. Agradecemos muito o contato.', NULL, NULL, '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', NULL);
+INSERT INTO public."Tenants" VALUES (6, 'Empresa Padrão', 'Tenant criado automaticamente', '00.000.000/0000-00', 'admin@empresa-padrao.com', 'active', NULL, 10, 5, '[{"day": 0, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Domingo"}, {"day": 1, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Segunda-Feira"}, {"day": 2, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Terça-Feira"}, {"day": 3, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quarta-Feira"}, {"day": 4, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Quinta-Feira"}, {"day": 5, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sexta-Feira"}, {"day": 6, "hr1": "08:00", "hr2": "12:00", "hr3": "14:00", "hr4": "18:00", "type": "O", "label": "Sábado"}]', 'Olá! Fantástico receber seu contato! No momento estamos ausentes e não poderemos lhe atender, mas vamos priorizar seu atendimento e retornaremos logo mais. Agradecemos muito o contato.', NULL, NULL, '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', NULL);
+
+
+--
+-- TOC entry 3989 (class 0 OID 26104)
+-- Dependencies: 222
+-- Data for Name: Tickets; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4013 (class 0 OID 26455)
+-- Dependencies: 246
+-- Data for Name: UserMessagesLog; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4039 (class 0 OID 27504)
+-- Dependencies: 272
+-- Data for Name: UserMessagesLogs; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4054 (class 0 OID 37227)
+-- Dependencies: 287
+-- Data for Name: UserRoles; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."UserRoles" VALUES (1, 8, 5, 1, NULL, NULL, true, '2025-12-21 11:34:04.221636', '2025-12-21 11:34:04.221636');
+
+
+--
+-- TOC entry 3985 (class 0 OID 26082)
+-- Dependencies: 218
+-- Data for Name: Users; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+INSERT INTO public."Users" VALUES (5, 'Super Admin', 'admin@superadmin.com', '$2a$08$D9h7tBQkkxnXDBcIqC8iie6qBOHOxLmkNcNp6mLVmqHr8d8LC.Dfe', '2021-03-10 17:28:29+00', '2021-03-10 17:28:29+00', 'super', 0, 1, NULL, NULL, false, '{}', '2021-03-10 17:28:29+00', 'active');
+INSERT INTO public."Users" VALUES (13, 'Test User New', 'testnew@test.com', '$2a$08$862pVr5mgCPIwP4YK3axOupikFCpDepoJdw5/G9oz5akHkTZf2E/.', '2025-12-18 21:40:09.636072+00', '2025-12-18 21:50:26.308+00', 'user', 0, 1, '2025-12-18 21:50:26.306+00', NULL, true, '{}', NULL, 'online');
+INSERT INTO public."Users" VALUES (7, 'DEMO', 'user@empresa-padrao.com', '$2a$08$z27.iiu7kRscmBKeHXJWbOfjbbCP7xY56at/ARIIYNv2/Dxutltue', '2021-03-10 17:28:29+00', '2025-12-20 12:06:29.956+00', 'user', 0, 2, '2025-12-20 11:15:16.737+00', '2025-12-20 12:01:53.178+00', false, '{"filtrosAtendimento":{"searchParam":"","pageNumber":1,"status":["open","pending","closed"],"showAll":false,"count":null,"queuesIds":[],"withUnreadMessages":false,"isNotAssignedUser":false,"includeNotQueueDefined":true},"isDark":true}', '2025-12-20 12:06:29.956+00', 'offline');
+INSERT INTO public."Users" VALUES (6, 'Administrador', 'admin@empresa-padrao.com', '$2a$08$0uCNCVOkG1.JJZrSBLEwKe0qhY4dtz70frW1u7PFnsBwxpgm/mQ8m', '2021-03-10 17:28:29+00', '2025-12-21 13:44:11.86+00', 'admin', 0, 2, '2025-12-21 03:00:04.827+00', '2025-12-20 11:15:11.145+00', true, '{"filtrosAtendimento":{"searchParam":"","pageNumber":1,"status":["open","pending","closed"],"showAll":true,"count":null,"queuesIds":[],"withUnreadMessages":false,"isNotAssignedUser":false,"includeNotQueueDefined":true},"isDark":true}', '2025-12-21 13:44:11.86+00', 'offline');
+INSERT INTO public."Users" VALUES (8, 'Aranha', 'aranha.com@gmail.com', '$2a$08$Ml2R63eEePsK1M0tAuchFuoOqLDGknk0048l.vd3/9LYZU4RwRpkS', '2021-03-10 17:28:29+00', '2025-12-21 16:59:07.588+00', 'super', 0, 1, '2025-12-21 16:58:10.221+00', '2025-12-21 16:59:07.538+00', false, '{"filtrosAtendimento":{"searchParam":"","pageNumber":1,"status":["open","pending","closed"],"showAll":false,"count":null,"queuesIds":[],"withUnreadMessages":false,"isNotAssignedUser":false,"includeNotQueueDefined":true},"isDark":true}', '2025-12-21 16:59:07.588+00', 'offline');
+
+
+--
+-- TOC entry 4005 (class 0 OID 26289)
+-- Dependencies: 238
+-- Data for Name: UsersQueues; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4040 (class 0 OID 27511)
+-- Dependencies: 273
+-- Data for Name: UsersQueuess; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 3992 (class 0 OID 26143)
+-- Dependencies: 225
+-- Data for Name: Whatsapps; Type: TABLE DATA; Schema: public; Owner: chatex
+--
+
+
+
+--
+-- TOC entry 4099 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: AutoReplyLogs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."AutoReplyLogs_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4100 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: AutoReply_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."AutoReply_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4101 (class 0 OID 0)
+-- Dependencies: 255
+-- Name: CampaignContacts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."CampaignContacts_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4102 (class 0 OID 0)
+-- Dependencies: 253
+-- Name: Campaigns_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Campaigns_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4103 (class 0 OID 0)
+-- Dependencies: 263
+-- Name: ChatFlow_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."ChatFlow_id_seq"', 2, true);
+
+
+--
+-- TOC entry 4104 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: ContactCustomFields_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."ContactCustomFields_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4105 (class 0 OID 0)
+-- Dependencies: 251
+-- Name: ContactTags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."ContactTags_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4106 (class 0 OID 0)
+-- Dependencies: 259
+-- Name: ContactWallets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."ContactWallets_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4107 (class 0 OID 0)
+-- Dependencies: 219
+-- Name: Contacts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Contacts_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4108 (class 0 OID 0)
+-- Dependencies: 278
+-- Name: ERPProviders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."ERPProviders_id_seq"', 4, true);
+
+
+--
+-- TOC entry 4109 (class 0 OID 0)
+-- Dependencies: 290
+-- Name: ErpProviders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."ErpProviders_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4110 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: FastReply_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."FastReply_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4111 (class 0 OID 0)
+-- Dependencies: 261
+-- Name: LogTickets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."LogTickets_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4112 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: MessagesOffLine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."MessagesOffLine_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4113 (class 0 OID 0)
+-- Dependencies: 284
+-- Name: Permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Permissions_id_seq"', 66, true);
+
+
+--
+-- TOC entry 4114 (class 0 OID 0)
+-- Dependencies: 274
+-- Name: Plans_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Plans_id_seq"', 7, true);
+
+
+--
+-- TOC entry 4115 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: Queues_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Queues_id_seq"', 1, true);
+
+
+--
+-- TOC entry 4116 (class 0 OID 0)
+-- Dependencies: 288
+-- Name: RolePermissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."RolePermissions_id_seq"', 109, true);
+
+
+--
+-- TOC entry 4117 (class 0 OID 0)
+-- Dependencies: 282
+-- Name: Roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Roles_id_seq"', 8, true);
+
+
+--
+-- TOC entry 4118 (class 0 OID 0)
+-- Dependencies: 265
+-- Name: Settings_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Settings_id_seq"', 42, true);
+
+
+--
+-- TOC entry 4119 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: StepsReplyActions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."StepsReplyActions_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4120 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: StepsReply_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."StepsReply_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4121 (class 0 OID 0)
+-- Dependencies: 280
+-- Name: Subscriptions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Subscriptions_id_seq"', 4, true);
+
+
+--
+-- TOC entry 4122 (class 0 OID 0)
+-- Dependencies: 249
+-- Name: Tags_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Tags_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4123 (class 0 OID 0)
+-- Dependencies: 276
+-- Name: TenantPlans_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."TenantPlans_id_seq"', 4, true);
+
+
+--
+-- TOC entry 4124 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: Tenants_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Tenants_id_seq"', 6, true);
+
+
+--
+-- TOC entry 4125 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: Tickets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Tickets_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4126 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: UserMessagesLog_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."UserMessagesLog_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4127 (class 0 OID 0)
+-- Dependencies: 286
+-- Name: UserRoles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."UserRoles_id_seq"', 1, true);
+
+
+--
+-- TOC entry 4128 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: UsersQueues_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."UsersQueues_id_seq"', 1, false);
+
+
+--
+-- TOC entry 4129 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: Users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Users_id_seq"', 25, true);
+
+
+--
+-- TOC entry 4130 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: Whatsapps_id_seq; Type: SEQUENCE SET; Schema: public; Owner: chatex
+--
+
+SELECT pg_catalog.setval('public."Whatsapps_id_seq"', 1, false);
+
+
+--
+-- TOC entry 3697 (class 2606 OID 26759)
+-- Name: ApiConfigs ApiConfigs_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiConfigs"
+    ADD CONSTRAINT "ApiConfigs_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3699 (class 2606 OID 26763)
+-- Name: ApiMessages ApiMessages_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiMessages"
+    ADD CONSTRAINT "ApiMessages_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3679 (class 2606 OID 26404)
+-- Name: AutoReplyLogs AutoReplyLogs_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReplyLogs"
+    ADD CONSTRAINT "AutoReplyLogs_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3667 (class 2606 OID 26210)
+-- Name: AutoReply AutoReply_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReply"
+    ADD CONSTRAINT "AutoReply_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3695 (class 2606 OID 26584)
+-- Name: CampaignContacts CampaignContacts_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."CampaignContacts"
+    ADD CONSTRAINT "CampaignContacts_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3693 (class 2606 OID 26555)
+-- Name: Campaigns Campaigns_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Campaigns"
+    ADD CONSTRAINT "Campaigns_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3705 (class 2606 OID 26711)
+-- Name: ChatFlow ChatFlow_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ChatFlow"
+    ADD CONSTRAINT "ChatFlow_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3665 (class 2606 OID 26159)
+-- Name: ContactCustomFields ContactCustomFields_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactCustomFields"
+    ADD CONSTRAINT "ContactCustomFields_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3691 (class 2606 OID 26527)
+-- Name: ContactTags ContactTags_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactTags"
+    ADD CONSTRAINT "ContactTags_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3701 (class 2606 OID 26654)
+-- Name: ContactWallets ContactWallets_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactWallets"
+    ADD CONSTRAINT "ContactWallets_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3655 (class 2606 OID 26100)
+-- Name: Contacts Contacts_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Contacts"
+    ADD CONSTRAINT "Contacts_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3715 (class 2606 OID 37048)
+-- Name: ERPProviders ERPProviders_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ERPProviders"
+    ADD CONSTRAINT "ERPProviders_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3757 (class 2606 OID 37301)
+-- Name: ErpProviders ErpProviders_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ErpProviders"
+    ADD CONSTRAINT "ErpProviders_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3685 (class 2606 OID 26485)
+-- Name: FastReply FastReply_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."FastReply"
+    ADD CONSTRAINT "FastReply_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3703 (class 2606 OID 26677)
+-- Name: LogTickets LogTickets_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."LogTickets"
+    ADD CONSTRAINT "LogTickets_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3681 (class 2606 OID 26428)
+-- Name: MessagesOffLine MessagesOffLine_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."MessagesOffLine"
+    ADD CONSTRAINT "MessagesOffLine_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3659 (class 2606 OID 26131)
+-- Name: Messages Messages_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Messages"
+    ADD CONSTRAINT "Messages_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3741 (class 2606 OID 37116)
+-- Name: Permissions Permissions_name_key; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Permissions"
+    ADD CONSTRAINT "Permissions_name_key" UNIQUE (name);
+
+
+--
+-- TOC entry 3743 (class 2606 OID 37114)
+-- Name: Permissions Permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Permissions"
+    ADD CONSTRAINT "Permissions_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3707 (class 2606 OID 36913)
+-- Name: Plans Plans_name_key; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Plans"
+    ADD CONSTRAINT "Plans_name_key" UNIQUE (name);
+
+
+--
+-- TOC entry 3709 (class 2606 OID 36911)
+-- Name: Plans Plans_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Plans"
+    ADD CONSTRAINT "Plans_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3673 (class 2606 OID 26277)
+-- Name: Queues Queues_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Queues"
+    ADD CONSTRAINT "Queues_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3755 (class 2606 OID 37265)
+-- Name: RolePermissions RolePermissions_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."RolePermissions"
+    ADD CONSTRAINT "RolePermissions_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3731 (class 2606 OID 37096)
+-- Name: Roles Roles_name_key; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Roles"
+    ADD CONSTRAINT "Roles_name_key" UNIQUE (name);
+
+
+--
+-- TOC entry 3733 (class 2606 OID 37094)
+-- Name: Roles Roles_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Roles"
+    ADD CONSTRAINT "Roles_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3649 (class 2606 OID 26080)
+-- Name: SequelizeMeta SequelizeMeta_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."SequelizeMeta"
+    ADD CONSTRAINT "SequelizeMeta_pkey" PRIMARY KEY (name);
+
+
+--
+-- TOC entry 3671 (class 2606 OID 26249)
+-- Name: StepsReplyActions StepsReplyActions_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions"
+    ADD CONSTRAINT "StepsReplyActions_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3669 (class 2606 OID 26229)
+-- Name: StepsReply StepsReply_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReply"
+    ADD CONSTRAINT "StepsReply_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3722 (class 2606 OID 37066)
+-- Name: Subscriptions Subscriptions_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Subscriptions"
+    ADD CONSTRAINT "Subscriptions_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3687 (class 2606 OID 26508)
+-- Name: Tags Tags_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tags"
+    ADD CONSTRAINT "Tags_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3711 (class 2606 OID 36922)
+-- Name: TenantPlans TenantPlans_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."TenantPlans"
+    ADD CONSTRAINT "TenantPlans_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3677 (class 2606 OID 26344)
+-- Name: Tenants Tenants_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tenants"
+    ADD CONSTRAINT "Tenants_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3657 (class 2606 OID 26112)
+-- Name: Tickets Tickets_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets"
+    ADD CONSTRAINT "Tickets_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3683 (class 2606 OID 26461)
+-- Name: UserMessagesLog UserMessagesLog_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserMessagesLog"
+    ADD CONSTRAINT "UserMessagesLog_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3753 (class 2606 OID 37235)
+-- Name: UserRoles UserRoles_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserRoles"
+    ADD CONSTRAINT "UserRoles_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3675 (class 2606 OID 26294)
+-- Name: UsersQueues UsersQueues_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UsersQueues"
+    ADD CONSTRAINT "UsersQueues_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3651 (class 2606 OID 26091)
+-- Name: Users Users_email_key; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_email_key" UNIQUE (email);
+
+
+--
+-- TOC entry 3653 (class 2606 OID 26089)
+-- Name: Users Users_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3661 (class 2606 OID 26848)
+-- Name: Whatsapps Whatsapps_name_key; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Whatsapps"
+    ADD CONSTRAINT "Whatsapps_name_key" UNIQUE (name);
+
+
+--
+-- TOC entry 3663 (class 2606 OID 26150)
+-- Name: Whatsapps Whatsapps_pkey; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Whatsapps"
+    ADD CONSTRAINT "Whatsapps_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3689 (class 2606 OID 26520)
+-- Name: Tags unique_constraint_tag_tenant; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tags"
+    ADD CONSTRAINT unique_constraint_tag_tenant UNIQUE (tag, "tenantId");
+
+
+--
+-- TOC entry 3751 (class 2606 OID 37209)
+-- Name: Permissions uq_Permissions_tenantid_name; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Permissions"
+    ADD CONSTRAINT "uq_Permissions_tenantid_name" UNIQUE ("tenantId", name);
+
+
+--
+-- TOC entry 3739 (class 2606 OID 37205)
+-- Name: Roles uq_Roles_tenantid_name; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Roles"
+    ADD CONSTRAINT "uq_Roles_tenantid_name" UNIQUE ("tenantId", name);
+
+
+--
+-- TOC entry 3729 (class 2606 OID 37193)
+-- Name: Subscriptions uq_Subscriptions_externalinvoiceid; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Subscriptions"
+    ADD CONSTRAINT "uq_Subscriptions_externalinvoiceid" UNIQUE ("externalInvoiceId");
+
+
+--
+-- TOC entry 3720 (class 2606 OID 37191)
+-- Name: ERPProviders uq_erpproviders_tenantid_providertype; Type: CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ERPProviders"
+    ADD CONSTRAINT uq_erpproviders_tenantid_providertype UNIQUE ("tenantId", "providerType");
+
+
+--
+-- TOC entry 3758 (class 1259 OID 37307)
+-- Name: erp_providers_tenant_id_index; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX erp_providers_tenant_id_index ON public."ErpProviders" USING btree ("tenantId");
+
+
+--
+-- TOC entry 3759 (class 1259 OID 37308)
+-- Name: erp_providers_tenant_status_index; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX erp_providers_tenant_status_index ON public."ErpProviders" USING btree ("tenantId", status);
+
+
+--
+-- TOC entry 3744 (class 1259 OID 37201)
+-- Name: idx_Permissions_action; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Permissions_action" ON public."Permissions" USING btree (action);
+
+
+--
+-- TOC entry 3745 (class 1259 OID 37203)
+-- Name: idx_Permissions_issystem; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Permissions_issystem" ON public."Permissions" USING btree ("isSystem");
+
+
+--
+-- TOC entry 3746 (class 1259 OID 37200)
+-- Name: idx_Permissions_module; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Permissions_module" ON public."Permissions" USING btree (module);
+
+
+--
+-- TOC entry 3747 (class 1259 OID 37202)
+-- Name: idx_Permissions_module_action; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Permissions_module_action" ON public."Permissions" USING btree (module, action);
+
+
+--
+-- TOC entry 3748 (class 1259 OID 37199)
+-- Name: idx_Permissions_name; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Permissions_name" ON public."Permissions" USING btree (name);
+
+
+--
+-- TOC entry 3749 (class 1259 OID 37198)
+-- Name: idx_Permissions_tenantid; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Permissions_tenantid" ON public."Permissions" USING btree ("tenantId");
+
+
+--
+-- TOC entry 3734 (class 1259 OID 37197)
+-- Name: idx_Roles_issystem; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Roles_issystem" ON public."Roles" USING btree ("isSystem");
+
+
+--
+-- TOC entry 3735 (class 1259 OID 37196)
+-- Name: idx_Roles_level; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Roles_level" ON public."Roles" USING btree (level);
+
+
+--
+-- TOC entry 3736 (class 1259 OID 37195)
+-- Name: idx_Roles_name; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Roles_name" ON public."Roles" USING btree (name);
+
+
+--
+-- TOC entry 3737 (class 1259 OID 37194)
+-- Name: idx_Roles_tenantid; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Roles_tenantid" ON public."Roles" USING btree ("tenantId");
+
+
+--
+-- TOC entry 3723 (class 1259 OID 37187)
+-- Name: idx_Subscriptions_erpproviderid; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Subscriptions_erpproviderid" ON public."Subscriptions" USING btree ("erpProviderId");
+
+
+--
+-- TOC entry 3724 (class 1259 OID 37186)
+-- Name: idx_Subscriptions_planid; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Subscriptions_planid" ON public."Subscriptions" USING btree ("planId");
+
+
+--
+-- TOC entry 3725 (class 1259 OID 37188)
+-- Name: idx_Subscriptions_status; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Subscriptions_status" ON public."Subscriptions" USING btree (status);
+
+
+--
+-- TOC entry 3726 (class 1259 OID 37185)
+-- Name: idx_Subscriptions_tenantid; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Subscriptions_tenantid" ON public."Subscriptions" USING btree ("tenantId");
+
+
+--
+-- TOC entry 3727 (class 1259 OID 37189)
+-- Name: idx_Subscriptions_tenantid_status; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX "idx_Subscriptions_tenantid_status" ON public."Subscriptions" USING btree ("tenantId", status);
+
+
+--
+-- TOC entry 3716 (class 1259 OID 37184)
+-- Name: idx_erpproviders_providertype; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX idx_erpproviders_providertype ON public."ERPProviders" USING btree ("providerType");
+
+
+--
+-- TOC entry 3717 (class 1259 OID 37182)
+-- Name: idx_erpproviders_tenantid; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX idx_erpproviders_tenantid ON public."ERPProviders" USING btree ("tenantId");
+
+
+--
+-- TOC entry 3718 (class 1259 OID 37183)
+-- Name: idx_erpproviders_tenantid_status; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX idx_erpproviders_tenantid_status ON public."ERPProviders" USING btree ("tenantId", status);
+
+
+--
+-- TOC entry 3712 (class 1259 OID 37010)
+-- Name: tenant_plans_plan_id; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX tenant_plans_plan_id ON public."TenantPlans" USING btree ("planId");
+
+
+--
+-- TOC entry 3713 (class 1259 OID 37009)
+-- Name: tenant_plans_tenant_id; Type: INDEX; Schema: public; Owner: chatex
+--
+
+CREATE INDEX tenant_plans_tenant_id ON public."TenantPlans" USING btree ("tenantId");
+
+
+--
+-- TOC entry 3811 (class 2606 OID 26607)
+-- Name: ApiConfigs ApiConfigs_sessionId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiConfigs"
+    ADD CONSTRAINT "ApiConfigs_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES public."Whatsapps"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3812 (class 2606 OID 26617)
+-- Name: ApiConfigs ApiConfigs_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiConfigs"
+    ADD CONSTRAINT "ApiConfigs_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3813 (class 2606 OID 26612)
+-- Name: ApiConfigs ApiConfigs_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiConfigs"
+    ADD CONSTRAINT "ApiConfigs_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3814 (class 2606 OID 26634)
+-- Name: ApiMessages ApiMessages_sessionId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiMessages"
+    ADD CONSTRAINT "ApiMessages_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES public."Whatsapps"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3815 (class 2606 OID 26639)
+-- Name: ApiMessages ApiMessages_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ApiMessages"
+    ADD CONSTRAINT "ApiMessages_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3791 (class 2606 OID 26405)
+-- Name: AutoReplyLogs AutoReplyLogs_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReplyLogs"
+    ADD CONSTRAINT "AutoReplyLogs_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3792 (class 2606 OID 26410)
+-- Name: AutoReplyLogs AutoReplyLogs_ticketId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReplyLogs"
+    ADD CONSTRAINT "AutoReplyLogs_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES public."Tickets"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3776 (class 2606 OID 26377)
+-- Name: AutoReply AutoReply_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReply"
+    ADD CONSTRAINT "AutoReply_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3777 (class 2606 OID 26211)
+-- Name: AutoReply AutoReply_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."AutoReply"
+    ADD CONSTRAINT "AutoReply_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3809 (class 2606 OID 26590)
+-- Name: CampaignContacts CampaignContacts_campaignId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."CampaignContacts"
+    ADD CONSTRAINT "CampaignContacts_campaignId_fkey" FOREIGN KEY ("campaignId") REFERENCES public."Campaigns"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3810 (class 2606 OID 26585)
+-- Name: CampaignContacts CampaignContacts_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."CampaignContacts"
+    ADD CONSTRAINT "CampaignContacts_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3806 (class 2606 OID 26556)
+-- Name: Campaigns Campaigns_sessionId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Campaigns"
+    ADD CONSTRAINT "Campaigns_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES public."Whatsapps"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3807 (class 2606 OID 26566)
+-- Name: Campaigns Campaigns_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Campaigns"
+    ADD CONSTRAINT "Campaigns_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3808 (class 2606 OID 26561)
+-- Name: Campaigns Campaigns_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Campaigns"
+    ADD CONSTRAINT "Campaigns_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3822 (class 2606 OID 26717)
+-- Name: ChatFlow ChatFlow_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ChatFlow"
+    ADD CONSTRAINT "ChatFlow_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3823 (class 2606 OID 26712)
+-- Name: ChatFlow ChatFlow_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ChatFlow"
+    ADD CONSTRAINT "ChatFlow_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3774 (class 2606 OID 26160)
+-- Name: ContactCustomFields ContactCustomFields_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactCustomFields"
+    ADD CONSTRAINT "ContactCustomFields_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3803 (class 2606 OID 26533)
+-- Name: ContactTags ContactTags_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactTags"
+    ADD CONSTRAINT "ContactTags_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3804 (class 2606 OID 26528)
+-- Name: ContactTags ContactTags_tagId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactTags"
+    ADD CONSTRAINT "ContactTags_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES public."Tags"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3805 (class 2606 OID 26538)
+-- Name: ContactTags ContactTags_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactTags"
+    ADD CONSTRAINT "ContactTags_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3816 (class 2606 OID 26660)
+-- Name: ContactWallets ContactWallets_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactWallets"
+    ADD CONSTRAINT "ContactWallets_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3817 (class 2606 OID 26665)
+-- Name: ContactWallets ContactWallets_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactWallets"
+    ADD CONSTRAINT "ContactWallets_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3818 (class 2606 OID 26655)
+-- Name: ContactWallets ContactWallets_walletId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ContactWallets"
+    ADD CONSTRAINT "ContactWallets_walletId_fkey" FOREIGN KEY ("walletId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3761 (class 2606 OID 26371)
+-- Name: Contacts Contacts_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Contacts"
+    ADD CONSTRAINT "Contacts_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3826 (class 2606 OID 37049)
+-- Name: ERPProviders ERPProviders_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ERPProviders"
+    ADD CONSTRAINT "ERPProviders_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3840 (class 2606 OID 37302)
+-- Name: ErpProviders ErpProviders_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."ErpProviders"
+    ADD CONSTRAINT "ErpProviders_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3799 (class 2606 OID 26491)
+-- Name: FastReply FastReply_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."FastReply"
+    ADD CONSTRAINT "FastReply_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3800 (class 2606 OID 26486)
+-- Name: FastReply FastReply_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."FastReply"
+    ADD CONSTRAINT "FastReply_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3819 (class 2606 OID 26688)
+-- Name: LogTickets LogTickets_queueId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."LogTickets"
+    ADD CONSTRAINT "LogTickets_queueId_fkey" FOREIGN KEY ("queueId") REFERENCES public."Queues"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3820 (class 2606 OID 26683)
+-- Name: LogTickets LogTickets_ticketId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."LogTickets"
+    ADD CONSTRAINT "LogTickets_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES public."Tickets"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3821 (class 2606 OID 26678)
+-- Name: LogTickets LogTickets_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."LogTickets"
+    ADD CONSTRAINT "LogTickets_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3793 (class 2606 OID 26439)
+-- Name: MessagesOffLine MessagesOffLine_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."MessagesOffLine"
+    ADD CONSTRAINT "MessagesOffLine_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3794 (class 2606 OID 26444)
+-- Name: MessagesOffLine MessagesOffLine_quotedMsgId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."MessagesOffLine"
+    ADD CONSTRAINT "MessagesOffLine_quotedMsgId_fkey" FOREIGN KEY ("quotedMsgId") REFERENCES public."Messages"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3795 (class 2606 OID 26434)
+-- Name: MessagesOffLine MessagesOffLine_ticketId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."MessagesOffLine"
+    ADD CONSTRAINT "MessagesOffLine_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES public."Tickets"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3796 (class 2606 OID 26429)
+-- Name: MessagesOffLine MessagesOffLine_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."MessagesOffLine"
+    ADD CONSTRAINT "MessagesOffLine_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3767 (class 2606 OID 26185)
+-- Name: Messages Messages_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Messages"
+    ADD CONSTRAINT "Messages_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3768 (class 2606 OID 26751)
+-- Name: Messages Messages_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Messages"
+    ADD CONSTRAINT "Messages_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3769 (class 2606 OID 26137)
+-- Name: Messages Messages_ticketId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Messages"
+    ADD CONSTRAINT "Messages_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES public."Tickets"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3770 (class 2606 OID 26449)
+-- Name: Messages Messages_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Messages"
+    ADD CONSTRAINT "Messages_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3831 (class 2606 OID 37117)
+-- Name: Permissions Permissions_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Permissions"
+    ADD CONSTRAINT "Permissions_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3785 (class 2606 OID 26365)
+-- Name: Queues Queues_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Queues"
+    ADD CONSTRAINT "Queues_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3786 (class 2606 OID 26278)
+-- Name: Queues Queues_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Queues"
+    ADD CONSTRAINT "Queues_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3836 (class 2606 OID 37281)
+-- Name: RolePermissions RolePermissions_assignedby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."RolePermissions"
+    ADD CONSTRAINT "RolePermissions_assignedby_fkey" FOREIGN KEY (assignedby) REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3837 (class 2606 OID 37271)
+-- Name: RolePermissions RolePermissions_permissionid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."RolePermissions"
+    ADD CONSTRAINT "RolePermissions_permissionid_fkey" FOREIGN KEY (permissionid) REFERENCES public."Permissions"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3838 (class 2606 OID 37266)
+-- Name: RolePermissions RolePermissions_roleid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."RolePermissions"
+    ADD CONSTRAINT "RolePermissions_roleid_fkey" FOREIGN KEY (roleid) REFERENCES public."Roles"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3839 (class 2606 OID 37276)
+-- Name: RolePermissions RolePermissions_tenantid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."RolePermissions"
+    ADD CONSTRAINT "RolePermissions_tenantid_fkey" FOREIGN KEY (tenantid) REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3830 (class 2606 OID 37097)
+-- Name: Roles Roles_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Roles"
+    ADD CONSTRAINT "Roles_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3775 (class 2606 OID 26359)
+-- Name: Settings Settings_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Settings"
+    ADD CONSTRAINT "Settings_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3780 (class 2606 OID 26260)
+-- Name: StepsReplyActions StepsReplyActions_nextStep_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions"
+    ADD CONSTRAINT "StepsReplyActions_nextStep_fkey" FOREIGN KEY ("nextStepId") REFERENCES public."StepsReply"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3781 (class 2606 OID 26313)
+-- Name: StepsReplyActions StepsReplyActions_queueId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions"
+    ADD CONSTRAINT "StepsReplyActions_queueId_fkey" FOREIGN KEY ("queueId") REFERENCES public."Queues"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3782 (class 2606 OID 26250)
+-- Name: StepsReplyActions StepsReplyActions_stepReplyId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions"
+    ADD CONSTRAINT "StepsReplyActions_stepReplyId_fkey" FOREIGN KEY ("stepReplyId") REFERENCES public."StepsReply"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3783 (class 2606 OID 26318)
+-- Name: StepsReplyActions StepsReplyActions_userIdDestination_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions"
+    ADD CONSTRAINT "StepsReplyActions_userIdDestination_fkey" FOREIGN KEY ("userIdDestination") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3784 (class 2606 OID 26255)
+-- Name: StepsReplyActions StepsReplyActions_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReplyActions"
+    ADD CONSTRAINT "StepsReplyActions_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3778 (class 2606 OID 26230)
+-- Name: StepsReply StepsReply_idAutoReply_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReply"
+    ADD CONSTRAINT "StepsReply_idAutoReply_fkey" FOREIGN KEY ("idAutoReply") REFERENCES public."AutoReply"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3779 (class 2606 OID 26235)
+-- Name: StepsReply StepsReply_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."StepsReply"
+    ADD CONSTRAINT "StepsReply_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3827 (class 2606 OID 37077)
+-- Name: Subscriptions Subscriptions_erpProviderId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Subscriptions"
+    ADD CONSTRAINT "Subscriptions_erpProviderId_fkey" FOREIGN KEY ("erpProviderId") REFERENCES public."ERPProviders"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3828 (class 2606 OID 37072)
+-- Name: Subscriptions Subscriptions_planId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Subscriptions"
+    ADD CONSTRAINT "Subscriptions_planId_fkey" FOREIGN KEY ("planId") REFERENCES public."Plans"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3829 (class 2606 OID 37067)
+-- Name: Subscriptions Subscriptions_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Subscriptions"
+    ADD CONSTRAINT "Subscriptions_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3801 (class 2606 OID 26514)
+-- Name: Tags Tags_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tags"
+    ADD CONSTRAINT "Tags_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3802 (class 2606 OID 26509)
+-- Name: Tags Tags_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tags"
+    ADD CONSTRAINT "Tags_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3824 (class 2606 OID 36928)
+-- Name: TenantPlans TenantPlans_planId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."TenantPlans"
+    ADD CONSTRAINT "TenantPlans_planId_fkey" FOREIGN KEY ("planId") REFERENCES public."Plans"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3825 (class 2606 OID 36923)
+-- Name: TenantPlans TenantPlans_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."TenantPlans"
+    ADD CONSTRAINT "TenantPlans_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3789 (class 2606 OID 26345)
+-- Name: Tenants Tenants_ownerId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tenants"
+    ADD CONSTRAINT "Tenants_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3790 (class 2606 OID 27124)
+-- Name: Tenants Tenants_owner_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tenants"
+    ADD CONSTRAINT "Tenants_owner_id_fkey" FOREIGN KEY (owner_id) REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3762 (class 2606 OID 26113)
+-- Name: Tickets Tickets_contactId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets"
+    ADD CONSTRAINT "Tickets_contactId_fkey" FOREIGN KEY ("contactId") REFERENCES public."Contacts"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3763 (class 2606 OID 26305)
+-- Name: Tickets Tickets_queueId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets"
+    ADD CONSTRAINT "Tickets_queueId_fkey" FOREIGN KEY ("queueId") REFERENCES public."Queues"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3764 (class 2606 OID 26352)
+-- Name: Tickets Tickets_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets"
+    ADD CONSTRAINT "Tickets_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3765 (class 2606 OID 26118)
+-- Name: Tickets Tickets_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets"
+    ADD CONSTRAINT "Tickets_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3766 (class 2606 OID 26176)
+-- Name: Tickets Tickets_whatsappId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Tickets"
+    ADD CONSTRAINT "Tickets_whatsappId_fkey" FOREIGN KEY ("whatsappId") REFERENCES public."Whatsapps"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3797 (class 2606 OID 26467)
+-- Name: UserMessagesLog UserMessagesLog_ticketId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserMessagesLog"
+    ADD CONSTRAINT "UserMessagesLog_ticketId_fkey" FOREIGN KEY ("ticketId") REFERENCES public."Tickets"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3798 (class 2606 OID 26462)
+-- Name: UserMessagesLog UserMessagesLog_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserMessagesLog"
+    ADD CONSTRAINT "UserMessagesLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3832 (class 2606 OID 37251)
+-- Name: UserRoles UserRoles_assignedby_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserRoles"
+    ADD CONSTRAINT "UserRoles_assignedby_fkey" FOREIGN KEY (assignedby) REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3833 (class 2606 OID 37241)
+-- Name: UserRoles UserRoles_roleid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserRoles"
+    ADD CONSTRAINT "UserRoles_roleid_fkey" FOREIGN KEY (roleid) REFERENCES public."Roles"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3834 (class 2606 OID 37246)
+-- Name: UserRoles UserRoles_tenantid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserRoles"
+    ADD CONSTRAINT "UserRoles_tenantid_fkey" FOREIGN KEY (tenantid) REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3835 (class 2606 OID 37236)
+-- Name: UserRoles UserRoles_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UserRoles"
+    ADD CONSTRAINT "UserRoles_userid_fkey" FOREIGN KEY (userid) REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3787 (class 2606 OID 26295)
+-- Name: UsersQueues UsersQueues_queueId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UsersQueues"
+    ADD CONSTRAINT "UsersQueues_queueId_fkey" FOREIGN KEY ("queueId") REFERENCES public."Queues"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3788 (class 2606 OID 26300)
+-- Name: UsersQueues UsersQueues_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."UsersQueues"
+    ADD CONSTRAINT "UsersQueues_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."Users"(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3760 (class 2606 OID 26382)
+-- Name: Users Users_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Users"
+    ADD CONSTRAINT "Users_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 3771 (class 2606 OID 26768)
+-- Name: Whatsapps Whatsapps_chatFlowId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Whatsapps"
+    ADD CONSTRAINT "Whatsapps_chatFlowId_fkey" FOREIGN KEY ("chatFlowId") REFERENCES public."ChatFlow"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3772 (class 2606 OID 27119)
+-- Name: Whatsapps Whatsapps_queueId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Whatsapps"
+    ADD CONSTRAINT "Whatsapps_queueId_fkey" FOREIGN KEY ("queueId") REFERENCES public."Queues"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- TOC entry 3773 (class 2606 OID 26387)
+-- Name: Whatsapps Whatsapps_tenantId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: chatex
+--
+
+ALTER TABLE ONLY public."Whatsapps"
+    ADD CONSTRAINT "Whatsapps_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES public."Tenants"(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 4066 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: chatex
+--
+
+REVOKE USAGE ON SCHEMA public FROM PUBLIC;
+
+
+-- Completed on 2025-12-21 14:38:46
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict tQ2BhfxrEbWCe2cdHdCfgjqEMPQvdViuFHV8pjCBDWL1bYfeUv7lruUewpL6xWL
+

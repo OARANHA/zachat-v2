@@ -19,6 +19,7 @@ import InstagramSendMessagesSystem from "../InstagramBotServices/InstagramSendMe
 import TelegramSendMessagesSystem from "../TbotServices/TelegramSendMessagesSystem";
 import { getTbot } from "../../libs/tbot";
 import SendMessageSystemProxy from "../../helpers/SendMessageSystemProxy";
+import UsageService from "../BillingServices/UsageService";
 
 interface MessageData {
   ticketId: number;
@@ -249,6 +250,14 @@ const CreateMessageSystemService = async ({
             type: "chat:create",
             payload: messageCreated
           });
+
+          // Incremento real de uso: +1 mensagem e bytes de mídia (se houver)
+          try {
+            const totalBytes = (medias as any)?.reduce((acc: number, m: any) => acc + (m?.size || 0), 0) || 0;
+            await UsageService.incrementMessages(Number(tenantId), 1, totalBytes);
+          } catch (e) {
+            // Não falhar o fluxo em caso de erro no tracking
+          }
         })
       );
     } else {
@@ -306,6 +315,13 @@ const CreateMessageSystemService = async ({
         type: "chat:create",
         payload: messageCreated
       });
+
+      // Incremento real de uso: +1 mensagem (sem mídia)
+      try {
+        await UsageService.incrementMessages(Number(tenantId), 1, 0);
+      } catch (e) {
+        // Não falhar o fluxo em caso de erro no tracking
+      }
     }
   } catch (error) {
     logger.error("CreateMessageSystemService", error);

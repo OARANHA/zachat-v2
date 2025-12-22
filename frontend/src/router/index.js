@@ -59,10 +59,6 @@ Router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    // Se usuário já autenticado e destino for login, redireciona para home-dashboard
-    if (to && to.name === 'login') {
-      return next({ name: 'home-dashboard' })
-    }
     next()
   }
 })

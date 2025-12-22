@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import * as UserController from "../controllers/UserController";
 import isAuth from "../middleware/isAuth";
+import checkPlanLimits from "../middleware/checkPlanLimits";
 
 const userRoutes = Router();
 
@@ -30,6 +31,7 @@ userRoutes.get(
 userRoutes.post(
   "/",
   isAuth,
+  checkPlanLimits("users"),
   UserController.store
 );
 

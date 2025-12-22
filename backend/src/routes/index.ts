@@ -31,6 +31,7 @@ import tenantPlanRoutes from './tenantPlanRoutes';
 import erpIntegrationRoutes from './erpIntegrationRoutes';
 import erpWebhookRoutes from './erpWebhookRoutes';
 import subscriptionRoutes from './subscriptionRoutes';
+import adminBillingRoutes from './adminBillingRoutes';
 
 const routes = Router();
 
@@ -58,6 +59,7 @@ routes.use('/api/whatsapp-sessions', whatsappSessionRoutes);
 routes.use('/api/whatsapp-webhooks', whatsappWebhookRoutes);
 routes.use('/api/api-config', apiConfigRoutes);
 routes.use('/api/admin', adminRoutes);
+routes.use('/api/admin', adminBillingRoutes);
 routes.use('/api/tenants', tenantRoutes);
 routes.use('/api/statistics', statisticsRoutes);
 routes.use('/api/contact-sync', contactSyncRoutes);

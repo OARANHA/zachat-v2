@@ -39,7 +39,7 @@ export type ERPProviderStatus = 'active' | 'inactive' | 'error';
   }
 }))
 @Table({
-  tableName: 'ErpProviders',
+  tableName: 'ERPProviders',
   timestamps: true,
   underscored: false,
   paranoid: false,

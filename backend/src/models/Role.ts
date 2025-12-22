@@ -2,7 +2,7 @@ import {
   Table,
   Column,
   Model,
-  DataTypes,
+  DataType,
   ForeignKey,
   BelongsTo,
   HasMany,
@@ -16,82 +16,82 @@ import RolePermission from './RolePermission';
   underscored: false,
   timestamps: false,
 })
-export default class Role extends Model {
+export default class Role extends Model<Role> {
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   })
-  id: number;
+  id!: number;
 
   @ForeignKey(() => Tenant)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'tenantId',
     allowNull: false,
   })
-  tenantId: number;
+  tenantId!: number;
 
   @Column({
-    type: DataTypes.STRING(100),
+    type: DataType.STRING(100),
     field: 'name',
     allowNull: false,
   })
-  name: string;
+  name!: string;
 
   @Column({
-    type: DataTypes.TEXT,
+    type: DataType.TEXT,
     field: 'description',
     allowNull: true,
   })
-  description: string;
+  description?: string;
 
   @Column({
-    type: DataTypes.STRING(20),
+    type: DataType.STRING(20),
     field: 'status',
     defaultValue: 'active',
     allowNull: false,
   })
-  status: 'active' | 'inactive' | 'archived';
+  status!: 'active' | 'inactive' | 'archived';
 
   @Column({
-    type: DataTypes.BOOLEAN,
+    type: DataType.BOOLEAN,
     field: 'isDefault',
     defaultValue: false,
     allowNull: false,
   })
-  isDefault: boolean;
+  isDefault!: boolean;
 
   @Column({
-    type: DataTypes.JSON,
+    type: DataType.JSON,
     field: 'metadata',
     allowNull: true,
   })
-  metadata: Record<string, any> | null;
+  metadata?: Record<string, any> | null;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'createdAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'updatedAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Associations
   @BelongsTo(() => Tenant, 'tenantId')
-  tenant: Tenant;
+  tenant!: Tenant;
 
   @HasMany(() => UserRole, 'roleId')
-  userRoles: UserRole[];
+  userRoles!: UserRole[];
 
   @HasMany(() => RolePermission, 'roleId')
-  rolePermissions: RolePermission[];
+  rolePermissions!: RolePermission[];
 }

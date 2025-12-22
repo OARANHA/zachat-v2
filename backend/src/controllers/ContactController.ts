@@ -222,6 +222,8 @@ export const syncContacts = async (
     .json({ message: "Contatos estão sendo sincronizados." });
 };
 
+import UsageService from "../services/BillingServices/UsageService";
+
 export const upload = async (req: Request, res: Response) => {
   const files = req.files as Express.Multer.File[];
   const file: Express.Multer.File = head(files) as Express.Multer.File;
@@ -242,6 +244,16 @@ export const upload = async (req: Request, res: Response) => {
     tags,
     wallets
   );
+
+  // incrementa storage com base no arquivo enviado (se existir)
+  try {
+    const totalBytes = (files || []).reduce((acc, f) => acc + (f?.size || 0), 0);
+    if (totalBytes > 0) {
+      await UsageService.incrementStorage(Number(tenantId), totalBytes);
+    }
+  } catch (e) {
+    // não bloqueia fluxo em caso de falha de tracking
+  }
 
   // const io = getIO();
 

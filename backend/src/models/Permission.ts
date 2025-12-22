@@ -2,7 +2,7 @@ import {
   Table,
   Column,
   Model,
-  DataTypes,
+  DataType,
   ForeignKey,
   BelongsTo,
   HasMany,
@@ -15,101 +15,101 @@ import RolePermission from './RolePermission';
   underscored: false,
   timestamps: false,
 })
-export default class Permission extends Model {
+export default class Permission extends Model<Permission> {
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   })
-  id: number;
+  id!: number;
 
   @ForeignKey(() => Tenant)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'tenantId',
     allowNull: false,
   })
-  tenantId: number;
+  tenantId!: number;
 
   @Column({
-    type: DataTypes.STRING(100),
+    type: DataType.STRING(100),
     field: 'name',
     allowNull: false,
     unique: true,
   })
-  name: string;
+  name!: string;
 
   @Column({
-    type: DataTypes.STRING(200),
+    type: DataType.STRING(200),
     field: 'description',
     allowNull: true,
   })
-  description: string;
+  description?: string;
 
   @Column({
-    type: DataTypes.STRING(50),
+    type: DataType.STRING(50),
     field: 'scope',
     defaultValue: 'tenant',
     allowNull: false,
   })
-  scope: 'tenant' | 'global' | 'system';
+  scope!: 'tenant' | 'global' | 'system';
 
   @Column({
-    type: DataTypes.STRING(50),
+    type: DataType.STRING(50),
     field: 'status',
     defaultValue: 'active',
     allowNull: false,
   })
-  status: 'active' | 'inactive' | 'deprecated';
+  status!: 'active' | 'inactive' | 'deprecated';
 
   @Column({
-    type: DataTypes.STRING(100),
+    type: DataType.STRING(100),
     field: 'resource',
     allowNull: true,
   })
-  resource: string;
+  resource?: string;
 
   @Column({
-    type: DataTypes.STRING(100),
+    type: DataType.STRING(100),
     field: 'action',
     allowNull: false,
   })
-  action: string;
+  action!: string;
 
   @Column({
-    type: DataTypes.TEXT,
+    type: DataType.TEXT,
     field: 'conditions',
     allowNull: true,
   })
-  conditions: string;
+  conditions?: string;
 
   @Column({
-    type: DataTypes.JSON,
+    type: DataType.JSON,
     field: 'metadata',
     allowNull: true,
   })
-  metadata: Record<string, any> | null;
+  metadata?: Record<string, any> | null;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'createdAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'updatedAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Associations
   @BelongsTo(() => Tenant, 'tenantId')
-  tenant: Tenant;
+  tenant!: Tenant;
 
   @HasMany(() => RolePermission, 'permissionId')
-  rolePermissions: RolePermission[];
+  rolePermissions!: RolePermission[];
 }

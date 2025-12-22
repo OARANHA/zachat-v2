@@ -8,6 +8,7 @@ import DeleteCampaignService from "../services/CampaignServices/DeleteCampaignSe
 import UpdateCampaignService from "../services/CampaignServices/UpdateCampaignService";
 import StartCampaignService from "../services/CampaignServices/StartCampaignService";
 import CancelCampaignService from "../services/CampaignServices/CancelCampaignService";
+import UsageService from "../services/BillingServices/UsageService";
 
 interface CampaignData {
   name: string;
@@ -57,6 +58,16 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     campaign,
     medias
   });
+
+  // incrementa storage pelo total de mídias anexadas
+  try {
+    const totalBytes = (medias || []).reduce((acc, f) => acc + (f?.size || 0), 0);
+    if (totalBytes > 0) {
+      await UsageService.incrementStorage(Number(tenantId), totalBytes);
+    }
+  } catch (e) {
+    // não bloqueia fluxo em caso de falha de tracking
+  }
 
   return res.status(200).json(newCampaign);
 };
@@ -110,6 +121,16 @@ export const update = async (
     campaignId,
     tenantId
   });
+
+  // incrementa storage pelo total de mídias anexadas
+  try {
+    const totalBytes = (medias || []).reduce((acc, f) => acc + (f?.size || 0), 0);
+    if (totalBytes > 0) {
+      await UsageService.incrementStorage(Number(tenantId), totalBytes);
+    }
+  } catch (e) {
+    // não bloqueia fluxo em caso de falha de tracking
+  }
 
   return res.status(200).json(campaignObj);
 };

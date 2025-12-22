@@ -2,6 +2,7 @@ import * as Yup from "yup";
 
 import AppError from "../../errors/AppError";
 import User from "../../models/User";
+import UsageService from "../BillingServices/UsageService";
 
 interface Request {
   email: string;
@@ -57,6 +58,14 @@ const CreateUserService = async ({
     profile,
     tenantId
   });
+
+  // Incremento real de uso: +1 usuário no período corrente
+  try {
+    await UsageService.incrementUsers(Number(tenantId), 1);
+  } catch (e) {
+    // Não falhar a criação do usuário em caso de erro no Redis/tracking
+    // Logar em nível adequado em implementação futura
+  }
 
   const serializedUser = {
     id: user.id,

@@ -1,22 +1,26 @@
 import { QueryInterface } from "sequelize";
 
 module.exports = {
-  up: (queryInterface: QueryInterface) => {
-    return queryInterface.sequelize.query(
-      `
-      INSERT INTO public."Settings"(key, value, "createdAt", "updatedAt", "tenantId") VALUES
-      ('userCreation', 'enabled', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1),
-      ('NotViewTicketsQueueUndefined', 'disabled', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1),
-      ('NotViewTicketsChatBot', 'enabled', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1),
-      ('DirectTicketsToWallets', 'disabled', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1),
-      ('NotViewAssignedTickets', 'disabled', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1),
-      ('botTicketActive', '3', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1),
-      ('ignoreGroupMsg', 'disabled', '2021-03-10 17:28:29.000', '2021-03-10 17:28:29.000', 1)
-      `
-    );
+  up: async (queryInterface: QueryInterface) => {
+    await queryInterface.sequelize.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1
+          FROM pg_indexes
+          WHERE schemaname = 'public'
+            AND indexname = 'Settings_key_tenantId_unique'
+        ) THEN
+          CREATE UNIQUE INDEX "Settings_key_tenantId_unique"
+            ON "Settings"("key", "tenantId");
+        END IF;
+      END $$;
+    `);
   },
 
-  down: (queryInterface: QueryInterface) => {
-    return queryInterface.bulkDelete("Settings", {});
+  down: async (queryInterface: QueryInterface) => {
+    await queryInterface.sequelize.query(`
+      DROP INDEX IF EXISTS "Settings_key_tenantId_unique";
+    `);
   }
 };

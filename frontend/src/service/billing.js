@@ -221,3 +221,25 @@ export const AtualizarPlano = (planoId, planoData) => {
     data: planoData
   })
 }
+
+// ================= Tenant Billing (uso/planos disponíveis) =================
+export const getTenantUsage = () => {
+  return request({
+    url: '/billing/tenant/usage',
+    method: 'get'
+  })
+}
+
+export const getTenantSubscription = () => {
+  return request({
+    url: '/billing/tenant/subscription',
+    method: 'get'
+  })
+}
+
+export const getTenantPlans = () => {
+  return request({
+    url: '/billing/tenant/plans',
+    method: 'get'
+  })
+}

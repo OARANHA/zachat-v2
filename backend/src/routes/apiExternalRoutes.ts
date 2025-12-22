@@ -25,6 +25,8 @@ apiExternalRoute.post(
   "/v1/api/external/:apiId",
   isAPIAuth,
   upload.single("media"),
+  // TODO (medium priority): aplicar checkPlanLimits('storage') e incrementar UsageService.incrementStorage
+  // após upload bem-sucedido conforme estratégia de controle de storage para API externa
   APIExternalController.sendMessageAPI
 );
 

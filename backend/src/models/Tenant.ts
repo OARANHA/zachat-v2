@@ -118,6 +118,12 @@ class Tenant extends Model<Tenant> {
   get isSuspended(): boolean {
     return this.status === 'suspended';
   }
+
+  /**
+   * Association: Tenant belongs to Owner (User)
+   */
+  @BelongsTo(() => User, { foreignKey: 'ownerId', as: 'ownerUser' })
+  ownerUser?: User;
 }
 
 export default Tenant;

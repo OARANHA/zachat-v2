@@ -2,7 +2,7 @@ import {
   Table,
   Column,
   Model,
-  DataTypes,
+  DataType,
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
@@ -15,83 +15,83 @@ import Tenant from './Tenant';
   underscored: false,
   timestamps: false,
 })
-export default class RolePermission extends Model {
+export default class RolePermission extends Model<RolePermission> {
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   })
-  id: number;
+  id!: number;
 
   @ForeignKey(() => Role)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'roleId',
     allowNull: false,
   })
-  roleId: number;
+  roleId!: number;
 
   @ForeignKey(() => Permission)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'permissionId',
     allowNull: false,
   })
-  permissionId: number;
+  permissionId!: number;
 
   @ForeignKey(() => Tenant)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'tenantId',
     allowNull: false,
   })
-  tenantId: number;
+  tenantId!: number;
 
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'assignedBy',
     allowNull: true,
   })
-  assignedBy: number;
+  assignedBy?: number;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'grantedAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  grantedAt: Date;
+  grantedAt!: Date;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'expiresAt',
     allowNull: true,
   })
-  expiresAt: Date;
+  expiresAt?: Date;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'createdAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'updatedAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Associations
   @BelongsTo(() => Role, 'roleId')
-  role: Role;
+  role!: Role;
 
   @BelongsTo(() => Permission, 'permissionId')
-  permission: Permission;
+  permission!: Permission;
 
   @BelongsTo(() => Tenant, 'tenantId')
-  tenant: Tenant;
+  tenant!: Tenant;
 }

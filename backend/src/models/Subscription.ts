@@ -43,7 +43,7 @@ export type SubscriptionStatus = 'pending' | 'active' | 'paused' | 'canceled';
 @Table({
   tableName: 'Subscriptions',
   timestamps: true,
-  underscored: true,
+  underscored: false,
   paranoid: false,
   indexes: [
     { fields: ['tenantId'] },

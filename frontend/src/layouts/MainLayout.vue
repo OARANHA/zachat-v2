@@ -372,17 +372,18 @@ const objMenuAdmin = [
     icon: 'mdi-call-split',
     routeName: 'api-service'
   },
-  {
-    title: 'Billing',
-    caption: 'Gestão de planos e assinaturas',
-    icon: 'mdi-currency-usd',
-    routeName: 'billing'
-  },
+  // Item de Billing global removido do menu do tenant (apenas superadmin deve ver visão global)
+  // {
+  //   title: 'Billing',
+  //   caption: 'Gestão de planos e assinaturas',
+  //   icon: 'mdi-currency-usd',
+  //   routeName: 'billing'
+  // },
   {
     title: 'Meu Plano',
     caption: 'Consumo e informações de plano',
     icon: 'mdi-chart-box',
-    routeName: 'my-plan'
+    routeName: 'tenant-billing'
   }
 ]
 

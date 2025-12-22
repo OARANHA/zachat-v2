@@ -8,6 +8,7 @@ import { StartTbotSession } from "../TbotServices/StartTbotSession";
 import { StartWaba360 } from "../WABA360/StartWaba360";
 import { StartMessengerBot } from "../MessengerChannelServices/StartMessengerBot";
 import WhatsAppProvider from "../../providers/WhatsAppProvider";
+import UsageService from "../BillingServices/UsageService";
 
 export const StartWhatsAppSession = async (
   whatsapp: Whatsapp
@@ -38,6 +39,14 @@ export const StartWhatsAppSession = async (
         qrcode: sessionData.qrCode || "",
         retries: 0
       });
+
+      // Incremento real de uso: +1 sessão WhatsApp no período corrente
+      try {
+        await UsageService.incrementWhatsappSessions(Number(whatsapp.tenantId), 1);
+      } catch (e) {
+        // Não falhar a criação da sessão em caso de erro no Redis/tracking
+        // TODO: logar warning futuramente
+      }
       
       // Emitir eventos para frontend
       io.emit(`${whatsapp.tenantId}:whatsappSession`, {

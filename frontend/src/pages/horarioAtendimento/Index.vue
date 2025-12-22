@@ -331,21 +331,44 @@ export default {
       try {
         console.log('🔍 Buscando horários de atendimento...')
         const { data } = await MostrarHorariosAtendiemento()
-        console.log('📊 Dados recebidos:', data)
-        console.log('📊 businessHours:', data.businessHours)
-        console.log('📊 messageBusinessHours:', data.messageBusinessHours)
-        // Verificar se os dados existem antes de atribuir
-        if (data.businessHours && data.messageBusinessHours) {
-          this.businessHours = data.businessHours
-          this.messageBusinessHours = data.messageBusinessHours
-          console.log('✅ Horários carregados:', this.businessHours)
-          console.log('✅ Mensagem carregada:', this.messageBusinessHours)
-        } else {
-          console.warn('⚠️ Dados não encontrados no backend')
-          this.businessHours = data.businessHours || []
-          this.messageBusinessHours = data.messageBusinessHours || ''
-          console.log('⚠️ Usando valores padrão')
-        }
+        console.log('📊 Dados recebidos (raw):', data)
+        const payload = data?.data || data
+        console.log('📊 businessHours:', payload?.businessHours)
+        console.log('📊 messageBusinessHours:', payload?.messageBusinessHours)
+        // Normaliza para garantir os 7 dias (Dom → Sáb)
+        const defaultDays = [
+          { day: 0, label: 'Domingo' },
+          { day: 1, label: 'Segunda-Feira' },
+          { day: 2, label: 'Terça-Feira' },
+          { day: 3, label: 'Quarta-Feira' },
+          { day: 4, label: 'Quinta-Feira' },
+          { day: 5, label: 'Sexta-Feira' },
+          { day: 6, label: 'Sábado' }
+        ]
+
+        const byDay = Array.isArray(payload?.businessHours)
+          ? Object.fromEntries(payload.businessHours.map(d => [Number(d.day), d]))
+          : {}
+
+        const normalized = defaultDays.map(d => {
+          const existing = byDay[d.day]
+          return {
+            day: d.day,
+            label: d.label,
+            type: existing?.type || 'O',
+            hr1: existing?.hr1 || '08:00',
+            hr2: existing?.hr2 || '12:00',
+            hr3: existing?.hr3 || '14:00',
+            hr4: existing?.hr4 || '18:00'
+          }
+        })
+
+        this.businessHours = normalized
+        this.messageBusinessHours = (payload && payload.messageBusinessHours != null)
+          ? payload.messageBusinessHours
+          : ''
+        console.log('✅ Horários normalizados:', this.businessHours)
+        console.log('✅ Mensagem carregada:', this.messageBusinessHours)
       } catch (error) {
         console.error('❌ Erro ao carregar horários:', error)
         this.$q.notify({
@@ -357,15 +380,55 @@ export default {
     },
 
     async salvarHorariosAtendimento () {
-      const { data } = await AtualizarHorariosAtendiemento(this.businessHours)
-      this.businessHours = data.businessHours
+      try {
+        const { data } = await AtualizarHorariosAtendiemento(this.businessHours)
+        const payload = data?.data || data
+
+        if (payload?.businessHours) this.businessHours = payload.businessHours
+
+        this.$q.notify({
+          type: 'positive',
+          message: data?.message || 'Horários atualizados com sucesso',
+          position: 'top'
+        })
+      } catch (err) {
+        const res = err?.response?.data || {}
+        this.$q.notify({
+          type: 'negative',
+          message: res.message || 'Erro ao atualizar horários de atendimento',
+          position: 'top'
+        })
+        // eslint-disable-next-line no-console
+        console.error(res.errors || err)
+      }
     },
 
     async salvarMensagemAusencia () {
-      const { data } = await AtualizarMensagemHorariosAtendiemento({
-        messageBusinessHours: this.messageBusinessHours
-      })
-      this.messageBusinessHours = data.messageBusinessHours
+      try {
+        const { data } = await AtualizarMensagemHorariosAtendiemento({
+          messageBusinessHours: this.messageBusinessHours
+        })
+        const payload = data?.data || data
+
+        if (payload?.messageBusinessHours != null) {
+          this.messageBusinessHours = payload.messageBusinessHours
+        }
+
+        this.$q.notify({
+          type: 'positive',
+          message: data?.message || 'Mensagem de ausência atualizada com sucesso',
+          position: 'top'
+        })
+      } catch (err) {
+        const res = err?.response?.data || {}
+        this.$q.notify({
+          type: 'negative',
+          message: res.message || 'Erro ao atualizar mensagem de ausência',
+          position: 'top'
+        })
+        // eslint-disable-next-line no-console
+        console.error(res.errors || err)
+      }
     }
   },
 

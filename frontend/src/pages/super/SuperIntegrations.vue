@@ -162,7 +162,7 @@ export default {
     async carregarIntegracao () {
       try {
         this.loading = true
-        const { data } = await api.get('/api/integrations/erp')
+        const { data } = await api.get('/integrations/erp')
         this.integration = data
       } catch (error) {
         if (error.response?.status === 404) {
@@ -177,7 +177,7 @@ export default {
     async configurarIntegracao () {
       try {
         this.loading = true
-        const { data } = await api.post('/api/integrations/erp/configure', this.formData)
+        const { data } = await api.post('/integrations/erp/configure', this.formData)
         this.integration = data
         this.$q.notify({
           type: 'positive',
@@ -199,7 +199,7 @@ export default {
     async testarConexao () {
       try {
         this.loading = true
-        await api.post('/api/integrations/erp/test', this.formData)
+        await api.post('/integrations/erp/test', this.formData)
         this.$q.notify({
           type: 'positive',
           message: 'Conexão com sucesso!',
@@ -220,7 +220,7 @@ export default {
       }).onOk(async () => {
         try {
           this.loading = true
-          await api.post('/api/integrations/erp/disable')
+          await api.post('/integrations/erp/disable')
           this.integration = null
           this.$q.notify({
             type: 'positive',

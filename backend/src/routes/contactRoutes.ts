@@ -5,6 +5,7 @@ import isAuth from "../middleware/isAuth";
 import uploadConfig from "../config/upload";
 import * as ContactController from "../controllers/ContactController";
 import * as ImportPhoneContactsController from "../controllers/ImportPhoneContactsController";
+import checkPlanLimits from "../middleware/checkPlanLimits";
 
 const upload = multer(uploadConfig);
 const contactRoutes = express.Router();
@@ -20,6 +21,8 @@ contactRoutes.post(
 contactRoutes.post(
   "/upload",
   isAuth,
+  // Validar limite de storage antes de processar upload de contatos
+  checkPlanLimits("storage"),
   upload.array("file"),
   ContactController.upload
 );

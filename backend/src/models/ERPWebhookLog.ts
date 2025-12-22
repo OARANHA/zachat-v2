@@ -39,9 +39,9 @@ export type WebhookEventType = 'payment' | 'refund' | 'failure' | 'sale' | 'stat
   }
 }))
 @Table({
-  tableName: 'erp_webhook_logs',
+  tableName: 'ERPWebhookLogs',
   timestamps: true,
-  underscored: true,
+  underscored: false,
   paranoid: false,
   indexes: [
     { fields: ['erpProviderId'] },

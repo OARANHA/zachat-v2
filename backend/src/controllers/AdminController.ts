@@ -16,6 +16,7 @@ import AdminCreateTenantService from "../services/AdminServices/AdminCreateTenan
 import AdminDeleteTenantService from "../services/AdminServices/AdminDeleteTenantService";
 import AdminListTenantsWithConsumptionService from "../services/AdminServices/AdminListTenantsWithConsumptionService";
 import AdminGetGlobalMetricsService from "../services/AdminServices/AdminGetGlobalMetricsService";
+import { logger } from "../utils/logger";
 
 type IndexQuery = {
   searchParam: string;
@@ -228,7 +229,8 @@ export const getDashboardMetrics = async (
   try {
     const metrics = await AdminGetGlobalMetricsService();
     return res.status(200).json(metrics);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error({ msg: "Erro ao obter métricas do dashboard", err: error?.message, stack: error?.stack });
     throw new AppError("Erro ao obter métricas do dashboard", 500);
   }
 };
@@ -240,7 +242,8 @@ export const getTenantsWithConsumption = async (
   try {
     const tenants = await AdminListTenantsWithConsumptionService();
     return res.status(200).json(tenants);
-  } catch (error) {
+  } catch (error: any) {
+    logger.error({ msg: "Erro ao listar tenants com consumo", err: error?.message, stack: error?.stack });
     throw new AppError("Erro ao listar tenants com consumo", 500);
   }
 };

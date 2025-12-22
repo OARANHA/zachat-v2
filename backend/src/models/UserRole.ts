@@ -2,7 +2,7 @@ import {
   Table,
   Column,
   Model,
-  DataTypes,
+  DataType,
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
@@ -15,83 +15,83 @@ import Tenant from './Tenant';
   underscored: false,
   timestamps: false,
 })
-export default class UserRole extends Model {
+export default class UserRole extends Model<UserRole> {
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   })
-  id: number;
+  id!: number;
 
   @ForeignKey(() => User)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'userId',
     allowNull: false,
   })
-  userId: number;
+  userId!: number;
 
   @ForeignKey(() => Role)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'roleId',
     allowNull: false,
   })
-  roleId: number;
+  roleId!: number;
 
   @ForeignKey(() => Tenant)
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'tenantId',
     allowNull: false,
   })
-  tenantId: number;
+  tenantId!: number;
 
   @Column({
-    type: DataTypes.INTEGER,
+    type: DataType.INTEGER,
     field: 'assignedBy',
     allowNull: true,
   })
-  assignedBy: number;
+  assignedBy?: number;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'expiresAt',
     allowNull: true,
   })
-  expiresAt: Date;
+  expiresAt?: Date;
 
   @Column({
-    type: DataTypes.BOOLEAN,
+    type: DataType.BOOLEAN,
     field: 'isDefault',
     defaultValue: false,
     allowNull: false,
   })
-  isDefault: boolean;
+  isDefault!: boolean;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'createdAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  createdAt: Date;
+  createdAt!: Date;
 
   @Column({
-    type: DataTypes.DATE,
+    type: DataType.DATE,
     field: 'updatedAt',
-    defaultValue: DataTypes.NOW,
+    defaultValue: DataType.NOW,
     allowNull: false,
   })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   // Associations
   @BelongsTo(() => User, 'userId')
-  user: User;
+  user!: User;
 
   @BelongsTo(() => Role, 'roleId')
-  role: Role;
+  role!: Role;
 
   @BelongsTo(() => Tenant, 'tenantId')
-  tenant: Tenant;
+  tenant!: Tenant;
 }

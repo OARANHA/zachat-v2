@@ -4,6 +4,7 @@ import uploadConfig from "../config/upload";
 import isAuth from "../middleware/isAuth";
 
 import * as CampaignController from "../controllers/CampaignController";
+import checkPlanLimits from "../middleware/checkPlanLimits";
 
 const campaignsRoutes = express.Router();
 const upload = multer(uploadConfig);
@@ -11,6 +12,8 @@ const upload = multer(uploadConfig);
 campaignsRoutes.post(
   "/",
   isAuth,
+  // Validar limite de storage antes de upload de mídias da campanha
+  checkPlanLimits("storage"),
   upload.array("medias"),
   CampaignController.store
 );
@@ -18,6 +21,8 @@ campaignsRoutes.get("/", isAuth, CampaignController.index);
 campaignsRoutes.put(
   "/:campaignId",
   isAuth,
+  // Validar limite de storage antes de upload de mídias da campanha
+  checkPlanLimits("storage"),
   upload.array("medias"),
   CampaignController.update
 );

@@ -70,10 +70,10 @@ services:
       - 28web-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/"]
-      interval: 10s
+      interval: 15s
       timeout: 5s
-      retries: 5
-      start_period: 60s
+      retries: 10
+      start_period: 90s
 
 
   # Backend principal (28web Hub)

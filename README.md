@@ -161,6 +161,12 @@ A utilização deste software sem autorização é proibida.
 
 Este projeto não é afiliado, associado, autorizado, endossado por, ou de qualquer forma oficialmente ligado ao WhatsApp, Instagram, Telegram, Messenger ou qualquer uma das suas filiais ou afiliadas. Os nomes, marcas, emblemas e imagens relacionados são marcas registradas dos seus respectivos proprietários.
 
+## 📚 Documentação Técnica
+
+- Billing e Usage Tracking: backend/docs/BILLING_USAGE_TRACKING.md
+- RBAC Implementation: backend/docs/RBAC_MIGRATION_REPORT.md
+- Migrations Workflow: backend/docs/MIGRATIONS_WORKFLOW.md
+
 ## 📧 Suporte
 
 Para suporte, entre em contato através do email: suporte@28web.com.br

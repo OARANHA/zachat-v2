@@ -91,6 +91,7 @@ const AdminListTenantsWithConsumptionService =
 
           const messageCount = await Message.count({
             where: {
+              tenantId: tenant.id,
               createdAt: {
                 [Op.gte]: firstDayOfMonth,
                 [Op.lte]: lastDayOfMonth
@@ -102,6 +103,10 @@ const AdminListTenantsWithConsumptionService =
           const maxConnections = tenant.maxConnections || 5;
           const maxMessagesPerMonth = 10000;
 
+          const usersPct = maxUsers > 0 ? Math.round((userCount / maxUsers) * 100) : 0;
+          const connPct = maxConnections > 0 ? Math.round((connectionCount / maxConnections) * 100) : 0;
+          const msgPct = maxMessagesPerMonth > 0 ? Math.round((messageCount / maxMessagesPerMonth) * 100) : 0;
+
           return {
             id: tenant.id,
             name: tenant.name,
@@ -111,21 +116,17 @@ const AdminListTenantsWithConsumptionService =
               users: {
                 current: userCount,
                 max: maxUsers,
-                percentage: Math.round((userCount / maxUsers) * 100)
+                percentage: usersPct
               },
               connections: {
                 current: connectionCount,
                 max: maxConnections,
-                percentage: Math.round(
-                  (connectionCount / maxConnections) * 100
-                )
+                percentage: connPct
               },
               messages: {
                 current: messageCount,
                 max: maxMessagesPerMonth,
-                percentage: Math.round(
-                  (messageCount / maxMessagesPerMonth) * 100
-                )
+                percentage: msgPct
               }
             },
             createdAt: tenant.createdAt

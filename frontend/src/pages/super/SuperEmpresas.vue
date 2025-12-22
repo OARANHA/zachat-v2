@@ -91,46 +91,15 @@
 </template>
 
 <script>
+import { getAdminTenants } from '../../service/admin-tenants'
+
 export default {
   name: 'SuperEmpresas',
   data () {
     return {
       userProfile: 'user',
       showNewDialog: false,
-      tenants: [
-        {
-          id: 1,
-          name: 'Empresa Alpha',
-          description: 'Empresa de teste',
-          cnpj: '12.345.678/0001-90',
-          email: 'admin@alpha.com',
-          status: 'active',
-          maxUsers: 5,
-          maxConnections: 1,
-          owner: {
-            id: 1,
-            name: 'Admin Alpha',
-            email: 'admin@alpha.com'
-          },
-          createdAt: new Date()
-        },
-        {
-          id: 2,
-          name: 'Empresa Beta',
-          description: 'Empresa em trial',
-          cnpj: '98.765.432/0001-10',
-          email: 'admin@beta.com',
-          status: 'trial',
-          maxUsers: 10,
-          maxConnections: 2,
-          owner: {
-            id: 2,
-            name: 'Admin Beta',
-            email: 'admin@beta.com'
-          },
-          createdAt: new Date()
-        }
-      ],
+      tenants: [],
       pagination: {
         rowsPerPage: 40,
         rowsNumber: 0
@@ -147,6 +116,22 @@ export default {
     }
   },
   methods: {
+    async loadTenants () {
+      try {
+        this.loading = true
+        const response = await getAdminTenants()
+        this.tenants = response.data
+      } catch (error) {
+        console.error('Error loading tenants:', error)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Erro ao carregar empresas',
+          position: 'top'
+        })
+      } finally {
+        this.loading = false
+      }
+    },
     getStatusColor (status) {
       const colors = {
         active: 'positive',
@@ -183,6 +168,9 @@ export default {
   },
   mounted () {
     this.userProfile = localStorage.getItem('profile')
+    if (this.userProfile === 'super') {
+      this.loadTenants()
+    }
   }
 }
 </script>

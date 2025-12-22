@@ -27,10 +27,15 @@ import Tenant from "./Tenant";
  * Interface para limites de plano
  */
 export interface PlanLimits {
-  whatsappSessions: number;
+  // Novo formato padronizado
   messagesPerMonth: number;
   storageGB: number;
   users: number;
+  whatsappSessions: number;
+  // Campos legados (compatibilidade)
+  whatsapp_accounts?: number;
+  messages_per_month?: number;
+  contacts?: number;
 }
 
 /**
@@ -82,6 +87,17 @@ class Plan extends Model<Plan> {
 
   @Column(DataType.JSONB)
   features!: PlanFeatures;
+
+  @Default('BRL')
+  @Column(DataType.STRING(3))
+  currency!: string;
+
+  @Column(DataType.TEXT)
+  description?: string | null;
+
+  @Default('monthly')
+  @Column(DataType.STRING(20))
+  billingCycle!: string;
 
   @Default('active')
   @Column(DataType.ENUM('active', 'inactive', 'archived'))

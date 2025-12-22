@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import AppError from "../errors/AppError";
-import logger from "../utils/logger";
+import { logger } from "../utils/logger";
 import UsageService from "../services/BillingServices/UsageService";
 
 type LimitType = "messages" | "storage" | "users" | "whatsappSessions";

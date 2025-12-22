@@ -12,6 +12,8 @@ hubMessageRoutes.post(
   "/hub-message/:ticketId",
   isAuth,
   upload.array("medias"),
+  // TODO (medium priority): aplicar checkPlanLimits('storage') e incrementar UsageService.incrementStorage
+  // após upload bem-sucedido quando o volume no hub exigir controle de storage
   MessageController.send
 );
 
