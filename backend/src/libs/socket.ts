@@ -10,9 +10,19 @@ import Chat from "./socketChat/Chat";
 let io: SocketIO;
 
 export const initIO = (httpServer: Server): SocketIO => {
+  const allowedOrigins = [
+    'http://localhost',
+    'http://localhost:3000',
+    'http://nginx',
+    'http://nginx:80',
+    process.env.FRONTEND_URL || 'https://app.28web.com.br'
+  ];
+
   io = new SocketIO(httpServer, {
     cors: {
-      origin: "*"
+      origin: allowedOrigins,
+      methods: ['GET', 'POST'],
+      credentials: true
     },
     pingTimeout: 180000,
     pingInterval: 60000

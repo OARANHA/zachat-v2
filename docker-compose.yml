@@ -62,7 +62,7 @@ services:
     environment:
       - NODE_ENV=development
       - VUE_APP_API_URL=http://backend:3100
-      - VUE_APP_WS_URL=ws://backend:3100
+      - VUE_APP_WS_URL=http://backend:3100
     volumes:
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
@@ -103,9 +103,9 @@ services:
       - IO_REDIS_PORT=6379
       - IO_REDIS_PASSWORD=chatex
       - IO_REDIS_DB_SESSION=2
-      - JWT_SECRET=28web_jwt_secret_key_change_in_production
-      - JWT_REFRESH_SECRET=28web_jwt_refresh_secret_key_change_in_production
-      - API_TOKEN_SECRET=28web_api_token_secret_change_in_production
+      - JWT_SECRET=kyaqauwkkLlOSwoUXYxdbiOrCxUrk5BLGi9nuBJoqdZ
+      - JWT_REFRESH_SECRET=kyaqauwkkLlOSwoUXYxdbiOrCxUrk5BLGi9nuBJoqdZ
+      - API_TOKEN_SECRET=kyaqauwkkLlOSwoUXYxdbiOrCxUrk5BLGi9nuBJoqdZ
       - CONNECTIONS_LIMIT=10
       - REGISTER_CHECK_IP=true
       - USER_LIMIT_RANDOM_NUMBER=5

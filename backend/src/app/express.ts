@@ -7,10 +7,21 @@ import helmet from "helmet";
 import { logger } from "../utils/logger";
 
 export default async function express(app: Application): Promise<void> {
-  const origin = [process.env.FRONTEND_URL || "https://app.28web.com.br"];
+  const allowedOrigins = [
+    'http://localhost',
+    'http://localhost:3000',
+    'http://nginx',
+    'http://nginx:80',
+    process.env.FRONTEND_URL || 'https://app.28web.com.br'
+  ];
+
   app.use(
     cors({
-      origin,
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true); // allow non-browser tools
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error(`CORS not allowed for origin: ${origin}`));
+      },
       credentials: true
     })
   );
