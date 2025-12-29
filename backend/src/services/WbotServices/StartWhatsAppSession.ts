@@ -26,11 +26,20 @@ export const StartWhatsAppSession = async (
       // AVISO: Usando WhatsAppProvider em vez de initWbot
       logger.warn(`StartWhatsAppSession usando WhatsAppProvider para whatsappId: ${whatsapp.id}`);
       
-      // Criar sessão no gateway
-      const sessionData = await WhatsAppProvider.getInstance().createSession({
+      // Seleciona o provider conforme feature flag USE_EVOLUTION_API
+      const provider = WhatsAppProvider.getInstance();
+
+      // Criar sessão no provider selecionado
+      const sessionData = await provider.createSession({
         tenantId: String(whatsapp.tenantId),
         name: whatsapp.name,
-        webhookUrl: `${process.env.BACKEND_URL}/webhook/whatsapp`
+        webhookUrl: process.env.USE_EVOLUTION_API === "true"
+          ? `${process.env.BACKEND_URL}/api/webhook/evolution`
+          : `${process.env.BACKEND_URL}/api/webhook/whatsapp`,
+        metadata: {
+          sessionId: String(whatsapp.id),
+          whatsappId: whatsapp.id
+        }
       });
       
       // Atualizar status da sessão com dados do gateway
@@ -54,14 +63,12 @@ export const StartWhatsAppSession = async (
         session: whatsapp
       });
       
-      // Se houver QR code, emitir evento específico
+      // Se houver QR code, emitir evento indicando que está pronto (não enviar o QR em si)
       if (sessionData.qrCode) {
         io.emit(`${whatsapp.tenantId}:whatsappSession`, {
           action: "qrcode",
-          session: {
-            ...whatsapp,
-            qrcode: sessionData.qrCode
-          }
+          sessionId: whatsapp.id,
+          message: "QR code ready - fetch from /api/whatsapp/:id"
         });
       }
     }

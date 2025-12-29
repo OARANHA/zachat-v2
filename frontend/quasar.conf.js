@@ -46,7 +46,7 @@ module.exports = function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       env: {
-        VUE_URL_API: process.env.VUE_URL_API
+        VUE_URL_API: process.env.VUE_APP_API_URL || 'http://backend:3100'
       },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
@@ -86,7 +86,17 @@ module.exports = function (ctx) {
     devServer: {
       https: false,
       port: 3000,
-      open: false, // ✅ CORRIGIDO: não abre navegador no container Docker
+      open: false,
+      host: '0.0.0.0', // Escuta em todos IPs no container
+
+      // WDS v3 para anunciar localhost no browser (HMR/SockJS)
+      disableHostCheck: true,
+      public: 'localhost:3000',
+      sockHost: 'localhost',
+      sockPort: 3000,
+
+      // allowedHosts is WDS v4; for WDS v3 we can either omit or use array syntax
+      allowedHosts: ['all'],
       // https://webpack.js.org/configuration/dev-server/#devserver-headers
       headers: {
         'Access-Control-Allow-Origin': '*',

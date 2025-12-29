@@ -10,12 +10,12 @@ const messageRoutes = Router();
 
 const upload = multer(uploadConfig);
 
-messageRoutes.get("/messages/:ticketId", isAuth, MessageController.index);
+// Rotas padronizadas sob /api/messages
+messageRoutes.get("/:ticketId", isAuth, MessageController.index);
 
 messageRoutes.post(
-  "/messages/:ticketId",
+  "/:ticketId",
   isAuth,
-  // Validar limites antes de processar upload e criar mensagem
   checkPlanLimits("messages"),
   checkPlanLimits("storage"),
   upload.array("medias"),
@@ -24,8 +24,8 @@ messageRoutes.post(
 
 messageRoutes.post("/forward-messages/", isAuth, MessageController.forward);
 
-messageRoutes.delete("/messages/:messageId", isAuth, MessageController.remove);
+messageRoutes.delete("/:messageId", isAuth, MessageController.remove);
 
-messageRoutes.post("/messages/edit/:messageId", isAuth, MessageController.edit);
+messageRoutes.post("/edit/:messageId", isAuth, MessageController.edit);
 
 export default messageRoutes;

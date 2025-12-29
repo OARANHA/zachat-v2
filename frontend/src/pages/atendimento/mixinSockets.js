@@ -1,4 +1,11 @@
-const usuario = JSON.parse(localStorage.getItem('usuario'))
+let usuario
+try {
+  const raw = localStorage.getItem('usuario')
+  usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+} catch (e) {
+  console.error('mixinSockets parse error usuario:', e, localStorage.getItem('usuario'))
+  usuario = null
+}
 import Router from 'src/router/index'
 import checkTicketFilter from 'src/utils/checkTicketFilter'
 import { socketIO } from 'src/utils/socket'

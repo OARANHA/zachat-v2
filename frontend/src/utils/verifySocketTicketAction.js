@@ -1,14 +1,42 @@
 
 const isNotViewAssignedTickets = () => {
-  const configuracoes = JSON.parse(localStorage.getItem('configuracoes'))
+  let configuracoes
+  try {
+    const raw = localStorage.getItem('configuracoes')
+    configuracoes = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('verifySocketTicketAction parse error configuracoes:', e, localStorage.getItem('configuracoes'))
+    configuracoes = []
+  }
   const conf = configuracoes?.find(c => c.key === 'NotViewAssignedTickets')
   return (conf?.value === 'enabled')
 }
 
 const verifySocketTicketAction = (ticket, action = null) => {
-  const filtros = JSON.parse(localStorage.getItem('filtrosAtendimento'))
-  const usuario = JSON.parse(localStorage.getItem('usuario'))
-  const UserQueues = JSON.parse(localStorage.getItem('queues'))
+  let filtros
+  try {
+    const raw = localStorage.getItem('filtrosAtendimento')
+    filtros = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('verifySocketTicketAction parse error filtrosAtendimento:', e, localStorage.getItem('filtrosAtendimento'))
+    filtros = null
+  }
+  let usuario
+  try {
+    const raw = localStorage.getItem('usuario')
+    usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('verifySocketTicketAction parse error usuario:', e, localStorage.getItem('usuario'))
+    usuario = null
+  }
+  let UserQueues
+  try {
+    const raw = localStorage.getItem('queues')
+    UserQueues = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('verifySocketTicketAction parse error queues:', e, localStorage.getItem('queues'))
+    UserQueues = []
+  }
   const profile = localStorage.getItem('profile')
 
   const isAdminShowAll = profile === 'admin' && filtros.showAll

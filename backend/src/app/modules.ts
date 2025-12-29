@@ -5,6 +5,7 @@ import moment from "moment";
 import uploadConfig from "../config/upload";
 import AppError from "../errors/AppError";
 import routes from "../routes";
+import webhookRoutes from "../routes/webhookRoutes";
 import { logger } from "../utils/logger";
 
 export default async function modules(app): Promise<void> {
@@ -44,6 +45,9 @@ export default async function modules(app): Promise<void> {
   app.use("/public", expressInstance.static(uploadConfig.directory));
 
   console.log('Registrando rotas...');
+  // Primeiro registra os webhooks da Evolution (rota absoluta /api/webhook/evolution*)
+  app.use(webhookRoutes);
+  // Depois, o restante das rotas
   app.use('/', routes);
   console.log('Rotas registradas com sucesso!');
   app.use(Sentry.Handlers.errorHandler());

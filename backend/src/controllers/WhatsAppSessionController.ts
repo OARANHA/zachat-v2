@@ -11,7 +11,11 @@ import { getIO } from "../libs/socket";
 import WhatsAppProvider from "../providers/WhatsAppProvider";
 
 const store = async (req: Request, res: Response): Promise<Response> => {
-  const { whatsappId } = req.params;
+  // Aceita tanto via params quanto via body
+  const whatsappId = (req.params as any)?.whatsappId || (req.body as any)?.whatsappId;
+  if (!whatsappId) {
+    return res.status(400).json({ error: 'MISSING_WHATSAPP_ID', message: 'Informe whatsappId no path ou no body.' });
+  }
   const { tenantId } = req.user;
   const whatsapp = await ShowWhatsAppService({
     id: whatsappId,
@@ -19,9 +23,9 @@ const store = async (req: Request, res: Response): Promise<Response> => {
     isInternal: true
   });
 
-  StartWhatsAppSession(whatsapp);
+  await StartWhatsAppSession(whatsapp);
 
-  return res.status(200).json({ message: "Starting session." });
+  return res.status(200).json({ message: "Starting session.", whatsappId });
 };
 
 const update = async (req: Request, res: Response): Promise<Response> => {
@@ -29,24 +33,45 @@ const update = async (req: Request, res: Response): Promise<Response> => {
   const { isQrcode } = req.body;
   const { tenantId } = req.user;
 
-  if (isQrcode) {
-    // Usar WhatsAppProvider para deletar sessão no gateway
-    const whatsappProvider = WhatsAppProvider.getInstance();
-    try {
-      await whatsappProvider.deleteSession(String(whatsappId));
-    } catch (error) {
-      logger.error(`Erro ao deletar sessão no gateway: ${error}`);
+  try {
+    if (isQrcode) {
+      // Seleciona o provider (façade único)
+      const provider = WhatsAppProvider.getInstance();
+      try {
+        await provider.deleteSession(String(whatsappId));
+      } catch (error) {
+        logger.error(`Erro ao deletar sessão no provider: ${error}`);
+      }
     }
+
+    const { whatsapp } = await UpdateWhatsAppService({
+      whatsappId,
+      whatsappData: { session: "" },
+      tenantId
+    });
+
+    // Iniciar sessão no provider selecionado (Evolution quando USE_EVOLUTION_API=true)
+    await StartWhatsAppSession(whatsapp);
+    
+    // Aguardar um pouco para o QR code ser gerado e salvo no banco
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // Refrescar dados do whatsapp do banco para retornar QR code atualizado
+    const updatedWhatsapp = await ShowWhatsAppService({
+      id: whatsappId,
+      tenantId,
+      isInternal: true
+    });
+    
+    return res.status(200).json({ 
+      message: "Starting session.",
+      whatsapp: updatedWhatsapp
+    });
+  } catch (err: any) {
+    logger.error(`WhatsAppSessionController.update failed: ${err?.message || err}`);
+    const status = err?.statusCode || 500;
+    return res.status(status).json({ error: err?.message || 'ERR_UPDATE_SESSION', detail: err?.stack });
   }
-
-  const { whatsapp } = await UpdateWhatsAppService({
-    whatsappId,
-    whatsappData: { session: "" },
-    tenantId
-  });
-
-  StartWhatsAppSession(whatsapp);
-  return res.status(200).json({ message: "Starting session." });
 };
 
 const remove = async (req: Request, res: Response): Promise<Response> => {
@@ -58,13 +83,13 @@ const remove = async (req: Request, res: Response): Promise<Response> => {
 
   try {
     if (channel.type === "whatsapp") {
-      // Usar WhatsAppProvider para desconectar sessão no gateway
-      const whatsappProvider = WhatsAppProvider.getInstance();
+      // Seleciona o provider (façade único)
+      const provider = WhatsAppProvider.getInstance();
       try {
-        await whatsappProvider.deleteSession(String(channel.id));
-        logger.info(`Sessão WhatsApp ${channel.id} desconectada via gateway`);
+        await provider.deleteSession(String(channel.id));
+        logger.info(`Sessão WhatsApp ${channel.id} desconectada via provider`);
       } catch (error) {
-        logger.error(`Erro ao desconectar sessão no gateway: ${error}`);
+        logger.error(`Erro ao desconectar sessão no provider: ${error}`);
       }
       
       await setValue(`${channel.id}-retryQrCode`, 0);

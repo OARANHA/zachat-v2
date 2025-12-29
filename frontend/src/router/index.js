@@ -45,7 +45,14 @@ const whiteListName = [
 ]
 
 Router.beforeEach((to, from, next) => {
-  const token = JSON.parse(localStorage.getItem('token'))
+  let token
+  try {
+    const raw = localStorage.getItem('token')
+    token = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('router token parse error:', e, localStorage.getItem('token'))
+    token = null
+  }
 
   if (!token) {
     if (whiteListName.indexOf(to.name) == -1) {

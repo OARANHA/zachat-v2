@@ -144,7 +144,14 @@
 </template>
 
 <script>
-const usuario = JSON.parse(localStorage.getItem('usuario'))
+let usuario
+try {
+  const raw = localStorage.getItem('usuario')
+  usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+} catch (e) {
+  console.error('DashTicketsFilas parse error usuario:', e, localStorage.getItem('usuario'))
+  usuario = null
+}
 import { socketIO } from 'src/utils/socket'
 const socket = socketIO()
 
@@ -218,7 +225,20 @@ export default {
     },
     cUserQueues () {
       try {
-        const filasUsuario = JSON.parse(UserQueues).map(q => {
+        let filasUsuarioArray = []
+        try {
+          if (!UserQueues || UserQueues === 'undefined') {
+            console.warn('[DashTicketsFilas] cUserQueues: dados indefinidos para UserQueues:', UserQueues)
+            filasUsuarioArray = []
+          } else {
+            const parsed = typeof UserQueues === 'string' ? JSON.parse(UserQueues) : UserQueues
+            filasUsuarioArray = Array.isArray(parsed) ? parsed : []
+          }
+        } catch (e) {
+          console.warn('[DashTicketsFilas] cUserQueues parse error:', e, UserQueues)
+          filasUsuarioArray = []
+        }
+        const filasUsuario = filasUsuarioArray.map(q => {
           if (q.isActive) {
             return q.id
           }

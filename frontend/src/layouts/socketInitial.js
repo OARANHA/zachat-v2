@@ -1,4 +1,11 @@
-const usuario = JSON.parse(localStorage.getItem('usuario'))
+let usuario
+try {
+  const raw = localStorage.getItem('usuario')
+  usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+} catch (e) {
+  console.error('socketInitial parse error usuario:', e, localStorage.getItem('usuario'))
+  usuario = null
+}
 import Router from 'src/router/index'
 import { socketIO } from '../utils/socket'
 import { ConsultarTickets } from 'src/service/tickets'

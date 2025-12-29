@@ -553,7 +553,13 @@ export default {
       })
     },
     atualizarUsuario () {
-      this.usuario = JSON.parse(localStorage.getItem('usuario'))
+      try {
+        const raw = localStorage.getItem('usuario')
+        this.usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+      } catch (e) {
+        console.error('MainLayout parse error usuario:', e, localStorage.getItem('usuario'))
+        this.usuario = null
+      }
       if (this.usuario.status === 'offline') {
         socket.emit(`${this.usuario.tenantId}:setUserIdle`)
       }
@@ -646,7 +652,13 @@ export default {
     } else {
       Notification.requestPermission()
     }
-    this.usuario = JSON.parse(localStorage.getItem('usuario'))
+    try {
+      const raw = localStorage.getItem('usuario')
+      this.usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+    } catch (e) {
+      console.error('MainLayout mounted parse error usuario:', e, localStorage.getItem('usuario'))
+      this.usuario = null
+    }
     this.userProfile = localStorage.getItem('profile')
     await this.conectarSocket(this.usuario)
   },

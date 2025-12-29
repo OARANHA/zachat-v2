@@ -13,7 +13,11 @@ import request from 'src/service/request'
  *   -> GET    /api/tickets/:ticketId/logs
  *
  * - routes.use('/api/messages', messageRoutes)
- *   (confira se os paths abaixo batem com messageRoutes)
+ *   -> GET    /api/messages/:ticketId
+ *   -> POST   /api/messages/:ticketId
+ *   -> POST   /api/messages/forward-messages
+ *   -> DELETE /api/messages/:messageId
+ *   -> POST   /api/messages/edit/:messageId
  */
 
 /**
@@ -78,7 +82,7 @@ export function AtualizarTicket (ticketId, data) {
 
 /**
  * Lista mensagens de um ticket
- * (confira se no backend está /api/messages/:ticketId ou /api/messages/messages/:ticketId)
+ * GET /api/messages/:ticketId
  */
 export function LocalizarMensagens (params) {
   return request({
@@ -90,6 +94,7 @@ export function LocalizarMensagens (params) {
 
 /**
  * Envia mensagem de texto em um ticket
+ * POST /api/messages/:ticketId
  */
 export function EnviarMensagemTexto (ticketId, data) {
   return request({
@@ -101,7 +106,7 @@ export function EnviarMensagemTexto (ticketId, data) {
 
 /**
  * Encaminha mensagens para outro contato
- * (confira se a rota no backend é /api/messages/forward-messages)
+ * POST /api/messages/forward-messages
  */
 export function EncaminharMensagem (messages, contato) {
   const data = {
@@ -109,7 +114,7 @@ export function EncaminharMensagem (messages, contato) {
     contact: contato
   }
   return request({
-    url: '/forward-messages/',
+    url: '/messages/forward-messages',
     method: 'post',
     data
   })
@@ -117,6 +122,7 @@ export function EncaminharMensagem (messages, contato) {
 
 /**
  * Deleta uma mensagem
+ * DELETE /api/messages/:messageId
  */
 export function DeletarMensagem (mensagem) {
   return request({
@@ -140,6 +146,7 @@ export function CriarTicket (data) {
 
 /**
  * Edita o conteúdo de uma mensagem
+ * POST /api/messages/edit/:messageId
  */
 export function EditarMensagem (mensagem) {
   return request({

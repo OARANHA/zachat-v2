@@ -78,8 +78,23 @@ const setConfigsUsuario = ({ isDark }) => {
   }
   // this.isDark = !this.isDark
   Dark.set(isDark)
-  const usuario = JSON.parse(localStorage.getItem('usuario'))
-  const filtrosAtendimento = JSON.parse(localStorage.getItem('filtrosAtendimento')) || filtroPadrao
+  let usuario
+  try {
+    const raw = localStorage.getItem('usuario')
+    usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('ccComponents parse error usuario:', e, localStorage.getItem('usuario'))
+    usuario = null
+  }
+  let filtrosAtendimento
+  try {
+    const raw = localStorage.getItem('filtrosAtendimento')
+    filtrosAtendimento = typeof raw === 'string' ? JSON.parse(raw) : raw
+    if (!filtrosAtendimento) filtrosAtendimento = filtroPadrao
+  } catch (e) {
+    console.error('ccComponents parse error filtrosAtendimento:', e, localStorage.getItem('filtrosAtendimento'))
+    filtrosAtendimento = filtroPadrao
+  }
   const data = {
     filtrosAtendimento,
     isDark: Dark.isActive

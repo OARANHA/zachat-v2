@@ -36,6 +36,14 @@ export function RequestNewQrCode (data) {
   })
 }
 
+// ✅ NOVO: Função auxiliar para buscar o whatsapp atualizado com o QR
+export function GetWhatsAppWithQRCode (whatsappId) {
+  return request({
+    url: `/whatsapp/whatsapp/${whatsappId}`,
+    method: 'get'
+  })
+}
+
 export function GetWhatSession (whatsAppId) {
   return request({
     url: `/whatsapp/whatsapp/${whatsAppId}`,
@@ -53,7 +61,7 @@ export function UpdateWhatsapp (whatsAppId, data) {
 
 export function CriarWhatsapp (data) {
   return request({
-    url: '/whatsapp',
+    url: '/whatsapp/whatsapp',
     method: 'post',
     data
   })
@@ -61,7 +69,7 @@ export function CriarWhatsapp (data) {
 
 export function DeletarWhatsapp (whatsAppId) {
   return request({
-    url: `/whatsapp/${whatsAppId}`,
+    url: `/whatsapp/whatsapp/${whatsAppId}`,
     method: 'delete'
   })
 }

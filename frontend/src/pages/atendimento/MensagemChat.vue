@@ -5,14 +5,15 @@
       enter-active-class="animated fadeIn"
       leave-active-class="animated fadeOut"
     >
-      <template v-for="(mensagem, index) in       mensagens      ">
+      <template v-for="(mensagem, index) in mensagens">
         <hr
           v-if="isLineDate"
           :key="'hr-' + index"
           class="hr-text q-mt-lg q-mb-md"
           :data-content="formatarData(mensagem.createdAt)"
           v-show="index === 0 || formatarData(mensagem.createdAt) !== formatarData(mensagens[index - 1].createdAt)"
-        >
+        />
+
         <template v-if="mensagens.length && index === mensagens.length - 1">
           <div
             :key="`ref-${mensagem.createdAt}`"
@@ -21,19 +22,20 @@
             style="float: 'left', background: 'black', clear: 'both'"
           />
         </template>
+
         <div
           :key="`chat-message-${mensagem.id}`"
           :id="`chat-message-${mensagem.id}`"
         />
+
         <q-chat-message
-          :key="mensagem.id"
+          :key="`q-chat-${mensagem.id}`"
           :stamp="dataInWords(mensagem.createdAt)"
           :sent="mensagem.fromMe"
           class="text-weight-medium"
           :bg-color="mensagem.fromMe ? 'grey-2' : $q.dark.isActive ? 'blue-2' : 'blue-1'"
           :class="{ pulseIdentications: identificarMensagem == `chat-message-${mensagem.id}` }"
         >
-          <!-- :bg-color="mensagem.fromMe ? 'grey-2' : 'secondary' " -->
           <div
             style="min-width: 100px; max-width: 350px;"
             :style="mensagem.isDeleted ? 'color: rgba(0, 0, 0, 0.36) !important;' : ''"
@@ -93,37 +95,50 @@
                 </div>
               </q-tooltip>
             </q-icon>
+
             <div v-if="mensagem.edited" class="text-italic">
               Editada: {{ mensagem.edited }}
             </div>
             <div v-if="mensagem.edited" class="text-italic">
               Mensagem anterior:<br>
             </div>
+
             <div
               v-if="mensagem.isDeleted"
               class="text-italic"
             >
               Mensagem apagada em {{ formatarData(mensagem.updatedAt, 'dd/MM/yyyy') }}.
             </div>
-            <div v-if="isGroupLabel(mensagem)"
-                 class="q-mb-sm"
-                 style="display: flex; align-items: center; color: rgb(59 23 251); fontWeight: 500;">
-              <q-avatar v-if="mensagem.contact && mensagem.contact.profilePicUrl"
-                        size="40px"
-                        class="q-mr-sm">
+
+            <div
+              v-if="isGroupLabel(mensagem)"
+              class="q-mb-sm"
+              style="display: flex; align-items: center; color: rgb(59 23 251); fontWeight: 500;"
+            >
+              <q-avatar
+                v-if="mensagem.contact && mensagem.contact.profilePicUrl"
+                size="40px"
+                class="q-mr-sm"
+              >
                 <img :src="mensagem.contact.profilePicUrl" alt="Profile Picture">
               </q-avatar>
               {{ isGroupLabel(mensagem) }}
             </div>
-            <div v-if="mensagem.quotedMsg" :class="{ textContentItem: !mensagem.isDeleted, textContentItemDeleted: mensagem.isDeleted }" @click="focarMensagem(mensagem.quotedMsg)">
+
+            <div
+              v-if="mensagem.quotedMsg"
+              :class="{ textContentItem: !mensagem.isDeleted, textContentItemDeleted: mensagem.isDeleted }"
+              @click="focarMensagem(mensagem.quotedMsg)"
+            >
               <MensagemRespondida
                 style="max-width: 240px; max-height: 150px"
                 class="row justify-center"
                 :mensagem="mensagem.quotedMsg"
               />
             </div>
+
             <q-btn
-              v-if=" !mensagem.isDeleted && isShowOptions "
+              v-if="!mensagem.isDeleted && isShowOptions"
               class="absolute-top-right mostar-btn-opcoes-chat"
               dense
               flat
@@ -139,43 +154,42 @@
               >
                 <q-list style="min-width: 100px">
                   <q-item
-                    :disable=" !['whatsapp', 'telegram'].includes(ticketFocado.channel) "
+                    :disable="!['whatsapp', 'telegram'].includes(ticketFocado.channel)"
                     clickable
-                    @click=" citarMensagem(mensagem) "
+                    @click="citarMensagem(mensagem)"
                   >
                     <q-item-section>Responder</q-item-section>
-                    <q-tooltip v-if=" !['whatsapp', 'telegram'].includes(ticketFocado.channel) ">
+                    <q-tooltip v-if="!['whatsapp', 'telegram'].includes(ticketFocado.channel)">
                       Disponível apenas para WhatsApp e Telegram
                     </q-tooltip>
                   </q-item>
-                  <q-item
-                    clickable
-                    @click=" encaminharMensagem(mensagem) "
-                  >
+
+                  <q-item clickable @click="encaminharMensagem(mensagem)">
                     <q-item-section>Encaminhar</q-item-section>
                   </q-item>
-                  <q-item
-                    clickable
-                    @click=" marcarMensagensParaEncaminhar(mensagem) "
-                  >
+
+                  <q-item clickable @click="marcarMensagensParaEncaminhar(mensagem)">
                     <q-item-section>Marcar (encaminhar várias)</q-item-section>
                   </q-item>
+
                   <q-item
-                    @click=" AbrirmodaleditarMensagem(mensagem) "
+                    @click="AbrirmodaleditarMensagem(mensagem)"
                     clickable
-                    v-if=" mensagem.fromMe  && mensagem.mediaType === 'chat'"
+                    v-if="mensagem.fromMe && mensagem.mediaType === 'chat'"
                     :disable="ticketFocado.channel === 'messenger'"
                   >
                     <q-item-section>
                       <q-item-label>Editar Mensagem</q-item-label>
                     </q-item-section>
                   </q-item>
+
                   <q-separator />
+
                   <q-item
-                    @click=" deletarMensagem(mensagem) "
+                    @click="deletarMensagem(mensagem)"
                     clickable
-                    v-if=" mensagem.fromMe "
-                    :disable=" isDesactivatDelete(mensagem) || ticketFocado.channel === 'messenger' "
+                    v-if="mensagem.fromMe"
+                    :disable="isDesactivatDelete(mensagem) || ticketFocado.channel === 'messenger'"
                   >
                     <q-item-section>
                       <q-item-label>Deletar</q-item-label>
@@ -184,13 +198,15 @@
                 </q-list>
               </q-menu>
             </q-btn>
+
             <q-icon
-              v-if=" mensagem.fromMe "
+              v-if="mensagem.fromMe"
               class="absolute-bottom-right q-pr-xs q-pb-xs"
-              :name=" ackIcons[mensagem.ack] "
+              :name="ackIcons[mensagem.ack]"
               size="1.2em"
-              :color=" mensagem.ack >= 3 ? 'blue-12' : '' "
+              :color="mensagem.ack >= 3 ? 'blue-12' : ''"
             />
+
             <template v-if="mensagem.mediaType === 'audio'">
               <AudioVisualizer
                 :url="mensagem.mediaUrl"
@@ -199,7 +215,8 @@
                 :avatar-src="mensagem.fromMe ? $store.state.usuario?.profileImage : mensagem.contact?.profilePicUrl"
               />
             </template>
-            <template v-if=" mensagem.mediaType === 'vcard' ">
+
+            <template v-if="mensagem.mediaType === 'vcard'">
               <div style="min-width: 250px;">
                 <ContatoCard
                   :mensagem="mensagem"
@@ -213,23 +230,11 @@
                 />
               </div>
             </template>
+
             <template v-if="mensagem.mediaType === 'location'">
               <q-img
-                @click=" urlMedia = mensagem.mediaUrl; abrirModalImagem = false "
+                @click="urlMedia = mensagem.mediaUrl; abrirModalImagem = false"
                 src="../../assets/localizacao.png"
-                spinner-color="primary"
-                height="150px"
-                width="330px"
-                class="q-mt-md"
-                style="cursor: pointer;"
-              />
-              <VueEasyLightbox moveDisabled :visible="abrirModalImagem" :imgs="urlMedia" :index="mensagem.ticketId || 1" @hide="abrirModalImagem = false" />
-            </template>
-            <template v-if=" mensagem.mediaType === 'image' ">
-              <!-- @click="buscarImageCors(mensagem.mediaUrl)" -->
-              <q-img
-                @click=" urlMedia = mensagem.mediaUrl; abrirModalImagem = true "
-                :src=" mensagem.mediaUrl "
                 spinner-color="primary"
                 height="150px"
                 width="330px"
@@ -238,15 +243,35 @@
               />
               <VueEasyLightbox
                 moveDisabled
-                :visible=" abrirModalImagem "
-                :imgs=" urlMedia "
-                :index=" mensagem.ticketId || 1 "
-                @hide=" abrirModalImagem = false "
+                :visible="abrirModalImagem"
+                :imgs="urlMedia"
+                :index="mensagem.ticketId || 1"
+                @hide="abrirModalImagem = false"
               />
             </template>
-            <template v-if=" mensagem.mediaType === 'video' ">
+
+            <template v-if="mensagem.mediaType === 'image'">
+              <q-img
+                @click="urlMedia = mensagem.mediaUrl; abrirModalImagem = true"
+                :src="mensagem.mediaUrl"
+                spinner-color="primary"
+                height="150px"
+                width="330px"
+                class="q-mt-md"
+                style="cursor: pointer;"
+              />
+              <VueEasyLightbox
+                moveDisabled
+                :visible="abrirModalImagem"
+                :imgs="urlMedia"
+                :index="mensagem.ticketId || 1"
+                @hide="abrirModalImagem = false"
+              />
+            </template>
+
+            <template v-if="mensagem.mediaType === 'video'">
               <video
-                :src=" mensagem.mediaUrl "
+                :src="mensagem.mediaUrl"
                 controls
                 class="q-mt-md"
                 style="objectFit: cover;
@@ -260,13 +285,20 @@
               >
               </video>
             </template>
-            <div v-if="mensagem.mediaType === 'reaction'" class="reaction-container q-mt-xs">
+
+            <div
+              v-if="mensagem.mediaType === 'reaction'"
+              class="reaction-container q-mt-xs"
+            >
               {{ mensagem.body }}
             </div>
-            <template v-if=" !['audio', 'vcard', 'image', 'video'].includes(mensagem.mediaType) && mensagem.mediaUrl ">
+
+            <template
+              v-if="!['audio', 'vcard', 'image', 'video'].includes(mensagem.mediaType) && mensagem.mediaUrl"
+            >
               <div class="text-center full-width hide-scrollbar no-scroll">
                 <iframe
-                  v-if=" isPDF(mensagem.mediaUrl) "
+                  v-if="isPDF(mensagem.mediaUrl)"
                   frameBorder="0"
                   scrolling="no"
                   style="
@@ -276,32 +308,32 @@
                     -ms-overflow-y: hidden;
                   "
                   class="no-scroll hide-scrollbar"
-                  :src=" mensagem.mediaUrl "
+                  :src="mensagem.mediaUrl"
                   id="frame-pdf"
                 >
                   Faça download do PDF
-                  <!-- alt : <a href="mensagem.mediaUrl"></a> -->
                 </iframe>
+
                 <q-btn
                   type="a"
-                  :color=" $q.dark.isActive ? '' : 'grey-3' "
+                  :color="$q.dark.isActive ? '' : 'grey-3'"
                   no-wrap
                   no-caps
                   stack
                   dense
-                  class="q-mt-sm text-center text-black btn-rounded  text-grey-9 ellipsis"
+                  class="q-mt-sm text-center text-black btn-rounded text-grey-9 ellipsis"
                   download
-                  :target=" isPDF(mensagem.mediaUrl) ? '_blank' : '' "
-                  :href=" mensagem.mediaUrl "
+                  :target="isPDF(mensagem.mediaUrl) ? '_blank' : ''"
+                  :href="mensagem.mediaUrl"
                 >
                   <q-tooltip
-                    v-if=" mensagem.mediaUrl "
+                    v-if="mensagem.mediaUrl"
                     content-class="text-bold"
                   >
                     Baixar: {{ mensagem.mediaName }}
                     {{ mensagem.body }}
                   </q-tooltip>
-                  <div class="row items-center q-ma-xs ">
+                  <div class="row items-center q-ma-xs">
                     <div
                       class="ellipsis col-grow q-pr-sm"
                       style="max-width: 290px"
@@ -313,19 +345,20 @@
                 </q-btn>
               </div>
             </template>
+
             <div
               v-linkified
-              v-if=" !['vcard', 'application', 'audio', 'reaction'].includes(mensagem.mediaType) "
-              :class=" { 'q-mt-sm': mensagem.mediaType !== 'chat' } "
+              v-if="!['vcard', 'application', 'audio', 'reaction'].includes(mensagem.mediaType)"
+              :class="{ 'q-mt-sm': mensagem.mediaType !== 'chat' }"
               class="q-message-container row items-end no-wrap"
             >
-              <div v-html=" farmatarMensagemWhatsapp(mensagem.body) ">
-              </div>
+              <div v-html="farmatarMensagemWhatsapp(mensagem.body)"></div>
             </div>
           </div>
         </q-chat-message>
       </template>
     </transition-group>
+
     <q-dialog v-model="showModaledit">
       <q-card>
         <q-card-section>
@@ -351,6 +384,9 @@ import MensagemRespondida from './MensagemRespondida'
 import ContatoCard from './ContatoCard.vue'
 import ContatoModal from './ContatoModal.vue'
 import AudioVisualizer from '../../components/AudioVisualizer.vue'
+import { DeletarMensagem, EditarMensagem } from 'src/service/tickets'
+import { Base64 } from 'js-base64'
+
 const downloadImageCors = axios.create({
   baseURL: process.env.VUE_URL_API,
   timeout: 20000,
@@ -358,15 +394,15 @@ const downloadImageCors = axios.create({
     responseType: 'blob'
   }
 })
-import { DeletarMensagem, EditarMensagem } from 'src/service/tickets'
-import { Base64 } from 'js-base64'
+
 export default {
   name: 'MensagemChat',
   mixins: [mixinCommon],
   props: {
     mensagem: {
       type: Object,
-      required: true
+      required: false,
+      default: () => ({})
     },
     mensagens: {
       type: Array,
@@ -394,7 +430,7 @@ export default {
     },
     replyingMessage: {
       type: Object,
-      default: () => { }
+      default: () => ({})
     }
   },
   data () {
@@ -406,7 +442,7 @@ export default {
       abrirModalImagem: false,
       urlMedia: '',
       identificarMensagem: null,
-      ackIcons: { // Se ACK == 3 ou 4 entao color green
+      ackIcons: {
         0: 'mdi-clock-outline',
         1: 'mdi-check',
         2: 'mdi-check-all',
@@ -432,7 +468,6 @@ export default {
     },
     saveContact (contact) {
       console.log('Contato salvo:', contact)
-      // Aqui você pode adicionar a lógica para salvar o contato
     },
     async salvarMensagem () {
       try {
@@ -477,7 +512,6 @@ export default {
     marcarMensagensParaEncaminhar (mensagem) {
       this.$emit('update:mensagensParaEncaminhar', [])
       this.$emit('update:ativarMultiEncaminhamento', !this.ativarMultiEncaminhamento)
-      // this.verificarEncaminharMensagem(mensagem)
     },
     isPDF (url) {
       if (!url) return false
@@ -492,11 +526,7 @@ export default {
         return ''
       }
     },
-    // cUrlMediaCors () {
-    //   return this.urlMedia
-    // },
     returnCardContato (str) {
-      // return btoa(str)
       return Base64.encode(str)
     },
     isDesactivatDelete (msg) {
@@ -556,15 +586,16 @@ export default {
             console.error(error)
             this.$notificarErro('Não foi possível apagar a mensagem', error)
           })
-      }).onCancel(() => {
-      })
+      }).onCancel(() => {})
     },
     focarMensagem (mensagem) {
       const id = `chat-message-${mensagem.id}`
       this.identificarMensagem = id
       this.$nextTick(() => {
         const elem = document.getElementById(id)
-        elem.scrollIntoView()
+        if (elem) {
+          elem.scrollIntoView()
+        }
       })
       setTimeout(() => {
         this.identificarMensagem = null
@@ -574,8 +605,7 @@ export default {
   mounted () {
     this.scrollToBottom()
   },
-  destroyed () {
-  }
+  destroyed () {}
 }
 </script>
 

@@ -25,8 +25,13 @@ export const update = async (
     throw new AppError("ERR_NO_PERMISSION", 403);
   }
   const { tenantId } = req.user;
-  // const { settingKey: key } = req.params;
-  const { value, key } = req.body;
+  const { settingKey } = req.params;
+  const { value, key: bodyKey } = req.body;
+  const key = bodyKey || settingKey;
+
+  if (!key) {
+    throw new AppError("ERR_NO_SETTING_KEY", 400);
+  }
 
   const setting = await UpdateSettingService({
     key,

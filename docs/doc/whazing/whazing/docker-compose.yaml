@@ -1,0 +1,107 @@
+
+networks:
+  whazing-net:
+    external: false
+
+volumes:
+  portainer_data:
+  postgres_data:
+
+services:
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=cleitonme@gmail.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--log.level=INFO"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik/acme.json:/letsencrypt/acme.json"
+    networks:
+      - whazing-net
+
+  backend:
+    image: whazing/whazing-backend:latest
+    container_name: whazing-backend
+    restart: always
+    expose:
+      - "3000"
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./backend/public:/app/public
+      - ./backend/private:/app/private
+      - ./backend/logs:/app/logs
+      - ./backend/.env:/app/.env
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`backend.seusite.com.br`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.backend.loadbalancer.server.port=3000"
+    networks:
+      - whazing-net
+
+  frontend:
+    image: whazing/whazing-frontend:latest
+    container_name: whazing-frontend
+    restart: always
+    expose:
+      - "8087"
+    volumes:
+      - ./frontend/.env:/app/.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`whazing.seusite.com.br`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=8087"
+    networks:
+      - whazing-net
+
+  postgres:
+    image: postgres:17.2
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: whazing
+      POSTGRES_PASSWORD: sua_senha_segura
+      POSTGRES_DB: postgres
+      TZ: America/Sao_Paulo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - whazing-net
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --appendonly yes --requirepass "sua_senha_segura"
+    restart: always
+    networks:
+      - whazing-net
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - whazing-net

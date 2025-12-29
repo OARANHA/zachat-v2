@@ -4,38 +4,44 @@ import { register } from 'register-service-worker'
 // events passes a ServiceWorkerRegistration instance in their arguments.
 // ServiceWorkerRegistration: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
 
-register(process.env.SERVICE_WORKER_FILE, {
-  // The registrationOptions object will be passed as the second argument
-  // to ServiceWorkerContainer.register()
-  // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register#Parameter
+// Avoid HMR disruptions in development: do not register SW in dev mode
+if (process.env.NODE_ENV === 'production') {
+  register(process.env.SERVICE_WORKER_FILE, {
+    // The registrationOptions object will be passed as the second argument
+    // to ServiceWorkerContainer.register()
+    // https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register#Parameter
 
-  // registrationOptions: { scope: './' },
+    // registrationOptions: { scope: './' },
 
-  ready (/* registration */) {
-    // console.log('Service worker is active.')
-  },
+    ready (/* registration */) {
+      // console.log('Service worker is active.')
+    },
 
-  registered (/* registration */) {
-    // console.log('Service worker has been registered.')
-  },
+    registered (/* registration */) {
+      // console.log('Service worker has been registered.')
+    },
 
-  cached (/* registration */) {
-    // console.log('Content has been cached for offline use.')
-  },
+    cached (/* registration */) {
+      // console.log('Content has been cached for offline use.')
+    },
 
-  updatefound (/* registration */) {
-    // console.log('New content is downloading.')
-  },
+    updatefound (/* registration */) {
+      // console.log('New content is downloading.')
+    },
 
-  updated (/* registration */) {
-    // console.log('New content is available; please refresh.')
-  },
+    updated (/* registration */) {
+      // console.log('New content is available; please refresh.')
+    },
 
-  offline () {
-    // console.log('No internet connection found. App is running in offline mode.')
-  },
+    offline () {
+      // console.log('No internet connection found. App is running in offline mode.')
+    },
 
-  error (/* err */) {
-    // console.error('Error during service worker registration:', err)
-  }
-})
+    error (/* err */) {
+      // console.error('Error during service worker registration:', err)
+    }
+  })
+} else {
+  // eslint-disable-next-line no-console
+  console.info('[PWA] Service Worker registration disabled in development to avoid breaking HMR.')
+}

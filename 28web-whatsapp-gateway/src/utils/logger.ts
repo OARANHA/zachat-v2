@@ -1,17 +1,26 @@
 import pino from 'pino';
 
-// Configuração do logger
-const logger = pino({
-  level: process.env.LOG_LEVEL || 'info',
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-      translateTime: 'HH:MM:ss Z',
-      ignore: 'pid,hostname'
+// Configuração do logger com suporte a desenvolvimento e produção
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
+const loggerConfig = isDevelopment
+  ? {
+      level: process.env.LOG_LEVEL || 'debug',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'HH:MM:ss Z',
+          ignore: 'pid,hostname',
+          singleLine: false,
+        },
+      },
     }
-  }
-});
+  : {
+      level: process.env.LOG_LEVEL || 'info',
+    };
+
+const logger = pino(loggerConfig);
 
 // Export para uso em outros módulos
 export { logger };

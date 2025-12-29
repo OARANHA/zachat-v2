@@ -3,7 +3,7 @@ import { promisify } from "util";
 import { writeFile } from "fs";
 import fs from "fs";
 
-import { Message as WbotMessage } from "whatsapp-web.js";
+// Adaptado para aceitar payload do gateway em vez de Message do whatsapp-web.js
 import Contact from "../../../models/Contact";
 import Ticket from "../../../models/Ticket";
 
@@ -19,25 +19,30 @@ import { path as ffmpegPath } from "@ffmpeg-installer/ffmpeg";
 const writeFileAsync = promisify(writeFile);
 
 const VerifyMediaMessage = async (
-  msg: WbotMessage,
+  msg: any,
   ticket: Ticket,
   contact: Contact
 ): Promise<Message | void> => {
   const quotedMsg = await VerifyQuotedMessage(msg);
 
-  const media = await msg.downloadMedia();
+  const incomingMedia = msg?.media;
 
-  if (!media) {
-    logger.error(`ERR_WAPP_DOWNLOAD_MEDIA:: ID: ${msg.id.id}`);
+  if (!incomingMedia || !incomingMedia.data || !incomingMedia.mimetype) {
+    logger.error(`ERR_WAPP_DOWNLOAD_MEDIA_MISSING_PAYLOAD:: ID: ${msg.id?.id}`);
     return;
   }
+
+  const media: any = {
+    data: incomingMedia.data,
+    mimetype: incomingMedia.mimetype,
+    filename: incomingMedia.filename
+  };
 
   if (!media.filename) {
     const ext = media.mimetype.split("/")[1].split(";")[0];
     media.filename = `${new Date().getTime()}.${ext}`;
   } else {
     const originalFilename = media.filename ? `-${media.filename}` : "";
-    // Always write a random filename
     media.filename = `${new Date().getTime()}${originalFilename}`;
   }
 

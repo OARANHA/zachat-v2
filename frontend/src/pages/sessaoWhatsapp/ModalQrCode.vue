@@ -15,10 +15,10 @@
       </q-card-section>
       <q-card-section class="text-center"
         :style="$q.dark.isActive ? 'background: white !important' : ''">
-        <QrcodeVue v-if="cQrcode"
-          :value="cQrcode"
-          :size="300"
-          level="H" />
+        <img v-if="cQrcode"
+          :src="cQrcode"
+          alt="QR Code"
+          style="max-width: 300px; max-height: 300px;" />
         <span v-else>
           Aguardando o Qr Code
         </span>
@@ -42,13 +42,8 @@
 
 <script>
 
-import QrcodeVue from 'qrcode.vue'
-
 export default {
   name: 'ModalQrCode',
-  components: {
-    QrcodeVue
-  },
   props: {
     abrirModalQR: {
       type: Boolean,

@@ -598,7 +598,14 @@ export default {
           this.$router.push({ name: 'chat', params: { ticketId: ticket.id } })
         } catch (error) {
           if (error.status === 409) {
-            const ticketAtual = JSON.parse(error.data.error)
+            let ticketAtual = null
+            try {
+              const rawErr = error?.data?.error
+              ticketAtual = typeof rawErr === 'string' ? JSON.parse(rawErr) : rawErr
+            } catch (e) {
+              console.error('contatos Index parse error ticketAtual:', e, error?.data?.error)
+              ticketAtual = null
+            }
             this.abrirAtendimentoExistente(contact, ticketAtual)
             return
           }

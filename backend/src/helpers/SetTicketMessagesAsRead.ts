@@ -22,9 +22,15 @@ const SetTicketMessagesAsRead = async (ticket: Ticket): Promise<void> => {
   try {
     if (ticket.channel === "whatsapp") {
       const wbot = await GetTicketWbot(ticket);
-      wbot
-        .sendSeen(`${ticket.contact.number}@${ticket.isGroup ? "g" : "c"}.us`)
-        .catch(e => console.error("não foi possível marcar como lido", e));
+      try {
+        if (wbot && typeof (wbot as any).sendSeen === 'function') {
+          await (wbot as any).sendSeen(`${ticket.contact.number}@${ticket.isGroup ? 'g' : 'c'}.us`)
+        } else {
+          logger.info('sendSeen não disponível para este provider (provável WhatsApp Business). Ignorando mark-as-read.');
+        }
+      } catch (e) {
+        console.warn('Erro ao marcar como lido:', (e as any)?.message || e);
+      }
     }
     if (ticket.channel === "messenger") {
       const messengerBot = getMessengerBot(ticket.whatsappId);

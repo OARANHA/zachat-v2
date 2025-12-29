@@ -69,6 +69,10 @@ routes.use('/api/billing', billingRoutes);
 routes.use('/api/tenant-plan', tenantPlanRoutes);
 // ========== WEBHOOKS ==========
 routes.use('/webhook/erp', erpWebhookRoutes);
+// ✅ NOVO: Compatibilidade com gateway WhatsApp que usa /webhook/whatsapp
+routes.use('/webhook/whatsapp', whatsappWebhookRoutes);
+// Alias compatível para cenários que chamam /api/webhook/whatsapp
+routes.use('/api/webhook/whatsapp', whatsappWebhookRoutes);
 
 // ========== INTEGRAÇÕES E ASSINATURAS ==========
 routes.use('/api/integrations/erp', erpIntegrationRoutes);

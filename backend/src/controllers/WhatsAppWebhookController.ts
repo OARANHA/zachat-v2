@@ -6,6 +6,7 @@ import verifyBusinessHours from "../services/WbotServices/helpers/VerifyBusiness
 import { Op } from "sequelize";
 import Message from "../models/Message";
 import Ticket from "../models/Ticket";
+import Whatsapp from "../models/Whatsapp";
 import { getIO } from "../libs/socket";
 
 interface WebhookEventData {
@@ -16,12 +17,16 @@ interface WebhookEventData {
 
 interface MessageData {
   from: string;
+  to?: string;
   body: string;
   timestamp: number;
   messageId: string;
   mediaType?: string;
   mediaUrl?: string;
   hasMedia?: boolean;
+  fromMe?: boolean;
+  type?: string;
+  media?: { data?: string; mimetype?: string; filename?: string };
 }
 
 interface MessageAckData {
@@ -88,17 +93,34 @@ interface WbotMessage {
   getContact(): Promise<any>;
 }
 
+import Queue from "../libs/Queue";
+
 class WhatsAppWebhookController {
+  // Helper para localizar Whatsapp pela sessionId (nome/identificador Evolution)
+  private static async findWhatsappBySession(sessionId: string): Promise<any | null> {
+    if (!sessionId) return null;
+    const byName = await (Whatsapp as any).findOne({ where: { name: sessionId } });
+    if (byName) return byName;
+    const bySession = await (Whatsapp as any).findOne({ where: { session: sessionId } });
+    if (bySession) return bySession;
+    return null;
+  }
+  // Enfileira mensagem de forma "fire-and-forget" para não bloquear o webhook
+  static enqueueIncomingMessage(sessionId: string, data: MessageData): void {
+    WhatsAppWebhookController.handleIncomingMessage(sessionId, data).catch(err => {
+      logger.error(`enqueueIncomingMessage failed: ${err}`);
+    });
+  }
   static async handle(req: Request, res: Response): Promise<Response> {
     try {
       const { sessionId, event, data } = req.body as WebhookEventData;
 
       switch (event) {
         case "message":
-          await WhatsAppWebhookController.handleIncomingMessage(sessionId, data);
+          WhatsAppWebhookController.enqueueIncomingMessage(sessionId, data);
           break;
         case "message_create":
-          await WhatsAppWebhookController.handleIncomingMessage(sessionId, data);
+          WhatsAppWebhookController.enqueueIncomingMessage(sessionId, data);
           break;
         case "session.status":
           await WhatsAppWebhookController.handleSessionStatus(sessionId, data);
@@ -139,21 +161,25 @@ class WhatsAppWebhookController {
   }
 
   private static async handleIncomingMessage(sessionId: string, data: MessageData): Promise<void> {
+    // Mantido para reuso interno; fila usará enqueueIncomingMessage para execução assíncrona
+  
     try {
       logger.info(`Processing incoming message from session ${sessionId}: ${data.messageId}`);
       
       // Adaptar dados do gateway para o formato esperado pelo HandleMessage
-      const adaptedMessage: WbotMessage = {
+      // OBS: esta função é executada pelo job em background; o webhook responde imediatamente
+
+      const adaptedMessage: WbotMessage & { media?: { data?: string; mimetype?: string; filename?: string } } = {
         id: { id: data.messageId },
         from: data.from,
-        to: "", // Será preenchido posteriormente
+        to: data.to || "",
         body: data.body,
         timestamp: data.timestamp,
-        hasMedia: data.hasMedia || false,
-        mediaType: data.mediaType,
+        hasMedia: data.hasMedia || Boolean(data.media),
+        mediaType: data.mediaType || data?.media?.mimetype?.split('/')?.[0],
         mediaUrl: data.mediaUrl,
-        fromMe: false,
-        type: data.mediaType || "chat",
+        fromMe: Boolean(data.fromMe),
+        type: data.type || data.mediaType || "chat",
         ack: 0,
         status: "received",
         wabaMediaId: undefined,
@@ -173,24 +199,27 @@ class WhatsAppWebhookController {
         isStatus: false,
         isGif: false,
         // Métodos necessários para compatibilidade
-        getChat: async () => ({ isGroup: false }),
-        getContact: async () => ({ id: data.from, name: "Contact" })
+        getChat: async () => ({ isGroup: false, unreadCount: 1 }),
+        getContact: async () => ({ id: data.from, name: "Contact" }),
+        media: data.media
       };
 
-      // Criar um objeto wbot mock para compatibilidade
-      const mockWbot = {
-        id: parseInt(sessionId),
-        getChat: async () => ({ isGroup: false }),
-        getContactById: async (id: string) => ({ id, name: "Contact" })
-      };
+      // Enfileirar processamento para execução assíncrona
+      await Queue.add("ProcessIncomingWhatsAppMessage", {
+        sessionId,
+        adaptedMessage
+      });
 
-      await HandleMessage(adaptedMessage as any, mockWbot as any);
-      
-      // Emitir evento para frontend
+      // Emitir evento para frontend (opcionalmente podemos emitir aqui um stub rápido)
       const io = getIO();
       io.to(sessionId).emit("whatsappMessage", {
-        action: "create",
-        message: adaptedMessage
+        action: "queued",
+        message: {
+          id: adaptedMessage.id.id,
+          from: adaptedMessage.from,
+          body: adaptedMessage.body,
+          timestamp: adaptedMessage.timestamp
+        }
       });
     } catch (err) {
       logger.error(`Error handling incoming message: ${err}`);
@@ -201,16 +230,30 @@ class WhatsAppWebhookController {
     try {
       logger.info(`Session ${sessionId} status changed to: ${data.status}`);
       
-      const io = getIO();
-      io.to(sessionId).emit("whatsappSession", {
-        action: "update",
-        session: {
-          id: sessionId,
-          status: data.status,
-          qrCode: data.qrCode,
-          phoneNumber: data.phoneNumber
+      // ✅ NOVO: Atualizar o banco de dados com status e QR code se disponível
+      try {
+        const whatsapp = await WhatsAppWebhookController.findWhatsappBySession(String(sessionId));
+        if (whatsapp) {
+          const updateData: any = { status: data.status };
+          if (data.qrCode) {
+            updateData.qrcode = data.qrCode;
+            logger.info(`QR code updated in database for session ${sessionId}`);
+          }
+          await whatsapp.update(updateData);
         }
-      });
+      } catch (dbErr: any) {
+        logger.warn(`Failed to update session status in database: ${dbErr.message}`);
+      }
+      
+      // ✅ Emitir socket event para toda a plataforma com dados atualizados
+      const io = getIO();
+      const whatsapp = await (Whatsapp as any).findOne({ where: { id: sessionId } });
+      if (whatsapp) {
+        io.emit(`${whatsapp.tenantId}:whatsappSession`, {
+          action: "update",
+          session: whatsapp.toJSON()
+        });
+      }
     } catch (err) {
       logger.error(`Error handling session status: ${err}`);
     }
@@ -219,17 +262,31 @@ class WhatsAppWebhookController {
   private static async handleChangeState(sessionId: string, data: SessionStatusData): Promise<void> {
     try {
       logger.info(`Session ${sessionId} state changed to: ${data.status}`);
-      
-      const io = getIO();
-      io.to(sessionId).emit("whatsappSession", {
-        action: "update",
-        session: {
-          id: sessionId,
-          status: data.status,
-          qrCode: data.qrCode,
-          phoneNumber: data.phoneNumber
+
+      // ✅ NOVO: Atualizar o banco de dados com novo status
+      try {
+        const whatsapp = await WhatsAppWebhookController.findWhatsappBySession(String(sessionId));
+        if (whatsapp && data.status) {
+          const updateData: any = { status: data.status };
+          if (data.phoneNumber) {
+            updateData.number = data.phoneNumber;
+          }
+          await whatsapp.update(updateData);
+          logger.info(`Session ${sessionId} status updated to ${data.status}`);
         }
-      });
+      } catch (dbErr: any) {
+        logger.warn(`Failed to update session change_state in database: ${dbErr.message}`);
+      }
+
+      // ✅ Emitir socket event para toda a plataforma com dados atualizados
+      const io = getIO();
+      const whatsapp = await (Whatsapp as any).findOne({ where: { id: sessionId } });
+      if (whatsapp) {
+        io.emit(`${whatsapp.tenantId}:whatsappSession`, {
+          action: "update",
+          session: whatsapp.toJSON()
+        });
+      }
     } catch (err) {
       logger.error(`Error handling change state: ${err}`);
     }
@@ -239,14 +296,26 @@ class WhatsAppWebhookController {
     try {
       logger.info(`QR Code received for session ${sessionId}`);
       
-      const io = getIO();
-      io.to(sessionId).emit("whatsappSession", {
-        action: "qrcode",
-        session: {
-          id: sessionId,
-          qrCode: data.qrCode
+      // ✅ NOVO: Atualizar o banco de dados com o QR code
+      try {
+        const whatsapp = await WhatsAppWebhookController.findWhatsappBySession(String(sessionId));
+        if (whatsapp && data.qrCode) {
+          await whatsapp.update({ qrcode: data.qrCode });
+          logger.info(`QR code saved to database for session ${sessionId}`);
         }
-      });
+      } catch (dbErr: any) {
+        logger.warn(`Failed to save QR code to database: ${dbErr.message}`);
+      }
+      
+      // ✅ Emitir socket event para toda a plataforma (não só para a sala sessionId)
+      const io = getIO();
+      const whatsapp = await WhatsAppWebhookController.findWhatsappBySession(String(sessionId));
+      if (whatsapp) {
+        io.emit(`${whatsapp.tenantId}:whatsappSession`, {
+          action: "qrcode",
+          session: whatsapp.toJSON()
+        });
+      }
     } catch (err) {
       logger.error(`Error handling QR code: ${err}`);
     }
@@ -392,3 +461,14 @@ class WhatsAppWebhookController {
 }
 
 export default WhatsAppWebhookController;
+
+
+
+
+
+
+
+
+
+
+

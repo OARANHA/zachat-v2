@@ -14,26 +14,79 @@ const checkTicketFilter = (ticket) => {
   }
 
   const NotViewTicketsChatBot = () => {
-    const configuracoes = JSON.parse(localStorage.getItem('configuracoes'))
+    let configuracoes
+    try {
+      const raw = localStorage.getItem('configuracoes')
+      configuracoes = (typeof raw === 'string') ? JSON.parse(raw) : raw
+    } catch (e) {
+      console.error('checkTicketFilter parse error configuracoes:', e, localStorage.getItem('configuracoes'))
+      configuracoes = undefined
+    }
     const conf = configuracoes?.find(c => c.key === 'NotViewTicketsChatBot')
     return (conf?.value === 'enabled')
   }
 
   const DirectTicketsToWallets = () => {
-    const configuracoes = JSON.parse(localStorage.getItem('configuracoes'))
+    let configuracoes
+    try {
+      const raw = localStorage.getItem('configuracoes')
+      configuracoes = (typeof raw === 'string') ? JSON.parse(raw) : raw
+    } catch (e) {
+      console.error('checkTicketFilter parse error configuracoes:', e, localStorage.getItem('configuracoes'))
+      configuracoes = undefined
+    }
     const conf = configuracoes?.find(c => c.key === 'DirectTicketsToWallets')
     return (conf?.value === 'enabled')
   }
 
   const isNotViewAssignedTickets = () => {
-    const configuracoes = JSON.parse(localStorage.getItem('configuracoes'))
+    let configuracoes
+    try {
+      const raw = localStorage.getItem('configuracoes')
+      configuracoes = (typeof raw === 'string') ? JSON.parse(raw) : raw
+    } catch (e) {
+      console.error('checkTicketFilter parse error configuracoes:', e, localStorage.getItem('configuracoes'))
+      configuracoes = undefined
+    }
     const conf = configuracoes?.find(c => c.key === 'NotViewAssignedTickets')
     return (conf?.value === 'enabled')
   }
-  const filtros = JSON.parse(localStorage.getItem('filtrosAtendimento')) || filtroPadrao
-  const usuario = JSON.parse(localStorage.getItem('usuario'))
-  const UserQueues = JSON.parse(localStorage.getItem('queues'))
-  const filasCadastradas = JSON.parse(localStorage.getItem('filasCadastradas') || '[]')
+  let filtros
+  try {
+    const raw = localStorage.getItem('filtrosAtendimento')
+    filtros = (typeof raw === 'string') ? JSON.parse(raw) : raw
+    if (!filtros || typeof filtros === 'undefined') {
+      console.warn('checkTicketFilter: filtrosAtendimento indefinido, usando padrão')
+      filtros = filtroPadrao
+    }
+  } catch (e) {
+    console.error('checkTicketFilter parse error filtrosAtendimento:', e, localStorage.getItem('filtrosAtendimento'))
+    filtros = filtroPadrao
+  }
+  let usuario
+  try {
+    const raw = localStorage.getItem('usuario')
+    usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('checkTicketFilter parse error usuario:', e, localStorage.getItem('usuario'))
+    usuario = null
+  }
+  let UserQueues
+  try {
+    const raw = localStorage.getItem('queues')
+    UserQueues = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('checkTicketFilter parse error queues:', e, localStorage.getItem('queues'))
+    UserQueues = []
+  }
+  let filasCadastradas
+  try {
+    const raw = localStorage.getItem('filasCadastradas') || '[]'
+    filasCadastradas = typeof raw === 'string' ? JSON.parse(raw) : raw
+  } catch (e) {
+    console.error('checkTicketFilter parse error filasCadastradas:', e, localStorage.getItem('filasCadastradas'))
+    filasCadastradas = []
+  }
   const profile = localStorage.getItem('profile')
   const isAdminShowAll = profile === 'admin' && filtros.showAll
   const isQueuesTenantExists = filasCadastradas.length > 0

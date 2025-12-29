@@ -1,8 +1,6 @@
-import { Message as WbotMessage } from "whatsapp-web.js";
+// Envio via WhatsAppProvider (gateway) em vez de usar whatsapp-web.js diretamente
 import AppError from "../../errors/AppError";
-import GetTicketWbot from "../../helpers/GetTicketWbot";
-import GetWbotMessage from "../../helpers/GetWbotMessage";
-import SerializeWbotMsgId from "../../helpers/SerializeWbotMsgId";
+import WhatsAppProvider from "../../providers/WhatsAppProvider";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import UserMessagesLog from "../../models/UserMessagesLog";
@@ -21,24 +19,16 @@ const SendWhatsAppMessage = async ({
   ticket,
   quotedMsg,
   userId
-}: Request): Promise<WbotMessage> => {
-  let quotedMsgSerializedId: string | undefined;
-  if (quotedMsg) {
-    await GetWbotMessage(ticket, quotedMsg.id);
-    quotedMsgSerializedId = SerializeWbotMsgId(ticket, quotedMsg);
-  }
-
-  const wbot = await GetTicketWbot(ticket);
-
+}: Request): Promise<any> => {
   try {
-    const sendMessage = await wbot.sendMessage(
-      `${ticket.contact.number}@${ticket.isGroup ? "g" : "c"}.us`,
+    const to = `${ticket.contact.number}@${ticket.isGroup ? "g" : "c"}.us`;
+    const provider = WhatsAppProvider.getInstance();
+    const resp = await provider.sendMessage({
+      to,
       body,
-      {
-        quotedMessageId: quotedMsgSerializedId,
-        linkPreview: false // fix: send a message takes 2 seconds when there's a link on message body
-      }
-    );
+      mediaUrl: undefined,
+      metadata: { sessionId: String(ticket.whatsappId) }
+    });
 
     await ticket.update({
       lastMessage: body,
@@ -47,7 +37,7 @@ const SendWhatsAppMessage = async ({
     try {
       if (userId) {
         await UserMessagesLog.create({
-          messageId: sendMessage.id.id,
+          messageId: resp.messageId,
           userId,
           ticketId: ticket.id
         });
@@ -55,10 +45,9 @@ const SendWhatsAppMessage = async ({
     } catch (error) {
       logger.error(`Error criar log mensagem ${error}`);
     }
-    return sendMessage;
+    return resp;
   } catch (err) {
     logger.error(`SendWhatsAppMessage | Error: ${err}`);
-    // await StartWhatsAppSessionVerify(ticket.whatsappId, err);
     throw new AppError("ERR_SENDING_WAPP_MSG");
   }
 };

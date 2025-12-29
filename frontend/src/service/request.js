@@ -57,7 +57,14 @@ service.interceptors.request.use(
     // url = url.replace(r, id_conta_cliente)
     // const u = new RegExp('id_unidade_negocio', 'g')
     // config.url = url.replace(u, id_unidade_negocio)
-    const tokenAuth = JSON.parse(localStorage.getItem('token'))
+    let tokenAuth
+    try {
+      const raw = localStorage.getItem('token')
+      tokenAuth = typeof raw === 'string' ? JSON.parse(raw) : raw
+    } catch (e) {
+      console.error('request interceptor token parse error:', e, localStorage.getItem('token'))
+      tokenAuth = null
+    }
     const token = tokenAuth ? 'Bearer ' + tokenAuth : null
     if (token) {
       config.headers.Authorization = token

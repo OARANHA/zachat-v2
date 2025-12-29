@@ -1,5 +1,5 @@
 # Multi-stage build for optimization
-FROM node:18-alpine AS builder
+FROM node:18 AS builder
 
 WORKDIR /app
 
@@ -15,13 +15,23 @@ COPY . .
 # Build application
 RUN npm run build
 
-# debug
-#RUN ls -R
-
-# Production stage
-FROM node:18-alpine AS stage-1
+# Production stage - usando imagem com Chromium pré-instalado
+FROM node:18
 
 WORKDIR /app
+
+# Install Chromium and dependencies
+RUN apt-get update && apt-get install -y \
+    chromium \
+    libnss3 \
+    libxss1 \
+    libappindicator3-1 \
+    libgbm1 \
+    libxshmfence1 \
+    fonts-liberation \
+    xdg-utils \
+    dumb-init \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy built application
 COPY --from=builder /app/dist/ ./dist/
@@ -33,8 +43,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 # Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+RUN useradd -m -u 1001 nodejs
 RUN chown -R nodejs:nodejs /app
 
 # Switch to non-root user
@@ -48,4 +57,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node dist/health-check.js || exit 1
 
 # Start application
-CMD ["node", "dist/server.js"]
+CMD ["dumb-init", "node", "dist/server.js"]

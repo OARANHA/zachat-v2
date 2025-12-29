@@ -32,18 +32,62 @@ const HandleMessage = async (
         return;
       }
 
+      // Log de processamento e debug do payload completo (temporário)
+      try {
+        logger.info(`Processing incoming message from session ${wbot?.id}...`);
+        // Log detalhado apenas para debugging do Business (somente sessão 32)
+        // ATENÇÃO: temporário — remover após validação em produção
+        if (Number(wbot?.id) === 32) {
+          // eslint-disable-next-line no-console
+          console.log('DEBUG MSG BUSINESS:', JSON.stringify(msg, null, 2));
+        }
+      } catch (e) {
+        // ignore
+      }
+
       const whatsapp = await ShowWhatsAppService({ id: wbot.id });
 
       const { tenantId } = whatsapp;
-      const chat = await msg.getChat();
+
+      // Obter chat com fallback para Business
+      let chat: any = null;
+      try {
+        if (typeof (msg as any).getChat === 'function') {
+          chat = await (msg as any).getChat();
+        } else {
+          chat = (msg as any).chat || (msg as any)._data?.chat || null;
+        }
+      } catch (e) {
+        chat = (msg as any).chat || (msg as any)._data?.chat || null;
+      }
+
+      if (!chat) {
+        // Business não retorna chat object, construir mínimo baseado na msg
+        const fromOrTo = (msg as any).from || (msg as any).to;
+        const [userPart, serverPart] = String(fromOrTo || '').split('@');
+        const isGroup = String((msg as any)?.from || "").endsWith("@g.us");
+        chat = {
+          id: {
+            _serialized: fromOrTo,
+            user: userPart,
+            server: serverPart
+          },
+          isGroup: isGroup,
+          unreadCount: (msg as any).fromMe ? 0 : 1,
+          name: undefined
+        } as any;
+        logger.info(`Created minimal chat for Business msg from: ${String((msg as any).from || '')}`);
+      }
       // IGNORAR MENSAGENS DE GRUPO
       const Settingdb = await Setting.findOne({
         where: { key: "ignoreGroupMsg", tenantId }
       });
 
+      const isGroupEarly = Boolean((chat as any)?.isGroup) || String((msg as any)?.from || "").endsWith("@g.us");
+
       if (
         Settingdb?.value === "enabled" &&
-        (chat.isGroup || msg.from === "status@broadcast")
+        (isGroupEarly || (msg as any).from === "status@broadcast")
       ) {
         return;
       }
@@ -53,32 +97,81 @@ const HandleMessage = async (
         let msgContact: WbotContact;
         let groupContact: Contact | undefined;
 
-        if (msg.fromMe) {
-          // media messages sent from me from cell phone, first comes with "hasMedia = false" and type = "image/ptt/etc"
-          // the media itself comes on body of message, as base64
-          // if this is the case, return and let this media be handled by media_uploaded event
-          // it should be improoved to handle the base64 media here in future versions
-          if (!msg.hasMedia && msg.type !== "chat" && msg.type !== "vcard" && msg.type !== "location")
-            return;
+        // Helper para extrair o "user" a partir de um JID ou campos comuns
+        const parseUserFrom = (jidLike: any): string | undefined => {
+          if (!jidLike) return undefined;
+          const s = String(jidLike);
+          const atIdx = s.indexOf("@");
+          return atIdx > 0 ? s.substring(0, atIdx) : s;
+        };
 
-          msgContact = await wbot.getContactById(msg.to);
-        } else {
-          msgContact = await msg.getContact();
+        // Fallbacks para obter o contato da mensagem
+        const buildMinimalContact = (userId?: string): WbotContact => {
+          const minimal: any = {
+            id: { user: userId || undefined },
+            name: undefined,
+            pushname: undefined,
+            shortName: undefined,
+            isUser: true,
+            isWAContact: true,
+            isGroup: false
+          };
+          return minimal as WbotContact;
+        };
+
+        try {
+          if (msg.fromMe) {
+            // media messages sent from me from cell phone, first comes with "hasMedia = false" and type = "image/ptt/etc"
+            // the media itself comes on body of message, as base64
+            // if this is the case, return and let this media be handled by media_uploaded event
+            // it should be improoved to handle the base64 media here in future versions
+            if (!msg.hasMedia && msg.type !== "chat" && msg.type !== "vcard" && msg.type !== "location")
+              return;
+
+            if (typeof (wbot as any).getContactById === 'function') {
+              msgContact = await (wbot as any).getContactById((msg as any).to);
+            } else {
+              msgContact = buildMinimalContact(parseUserFrom((msg as any).to));
+            }
+          } else {
+            if (typeof (msg as any).getContact === 'function') {
+              msgContact = await (msg as any).getContact();
+            } else if (typeof (wbot as any).getContactById === 'function') {
+              msgContact = await (wbot as any).getContactById((msg as any).from);
+            } else {
+              const jid = (msg as any).from || (msg as any)?._data?.from || (chat as any)?.id?._serialized;
+              msgContact = buildMinimalContact(parseUserFrom(jid));
+            }
+          }
+        } catch (e) {
+          const jid = (msg as any).fromMe ? (msg as any).to : (msg as any).from;
+          msgContact = buildMinimalContact(parseUserFrom(jid));
         }
 
-        if (chat.isGroup) {
-          let msgGroupContact;
-
-          if (msg.fromMe) {
-            msgGroupContact = await wbot.getContactById(msg.to);
-          } else {
-            msgGroupContact = await wbot.getContactById(msg.from);
+        // Detecção robusta de grupo
+        const isGroup = Boolean((chat as any)?.isGroup) || String((msg as any)?.from || "").endsWith("@g.us");
+        if (isGroup) {
+          let msgGroupContact: any;
+          try {
+            if (msg.fromMe) {
+              if (typeof (wbot as any).getContactById === 'function') {
+                msgGroupContact = await (wbot as any).getContactById((msg as any).to);
+              }
+            } else if (typeof (wbot as any).getContactById === 'function') {
+              msgGroupContact = await (wbot as any).getContactById((msg as any).from);
+            }
+          } catch (e) {
+            // ignore
           }
-
+          if (!msgGroupContact) {
+            const jid = (msg as any).fromMe ? (msg as any).to : (msg as any).from;
+            msgGroupContact = buildMinimalContact(parseUserFrom(jid));
+            (msgGroupContact as any).isGroup = true;
+          }
           groupContact = await VerifyContact(msgGroupContact, tenantId);
         }
 
-        const unreadMessages = msg.fromMe ? 0 : chat.unreadCount;
+        const unreadMessages = (msg as any).fromMe ? 0 : ((chat as any)?.unreadCount ?? 0);
 
         // const profilePicUrl = await msgContact.getProfilePicUrl();
         const contact = await VerifyContact(msgContact, tenantId);

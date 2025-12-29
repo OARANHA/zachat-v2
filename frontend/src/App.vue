@@ -25,7 +25,14 @@ export default {
     }
   },
   beforeMount () {
-    const usuario = JSON.parse(localStorage.getItem('usuario'))
+    let usuario
+    try {
+      const raw = localStorage.getItem('usuario')
+      usuario = typeof raw === 'string' ? JSON.parse(raw) : raw
+    } catch (e) {
+      console.error('App.vue parse error usuario:', e, localStorage.getItem('usuario'))
+      usuario = null
+    }
     if (usuario?.configs?.isDark) {
       this.$q.dark.set(usuario?.configs?.isDark)
     }

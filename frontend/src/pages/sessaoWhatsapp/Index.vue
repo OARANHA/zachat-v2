@@ -198,7 +198,7 @@
 
 <script>
 
-import { DeletarWhatsapp, DeleteWhatsappSession, StartWhatsappSession, ListarWhatsapps, RequestNewQrCode, UpdateWhatsapp } from 'src/service/sessoesWhatsapp'
+import { DeletarWhatsapp, DeleteWhatsappSession, StartWhatsappSession, ListarWhatsapps, RequestNewQrCode, UpdateWhatsapp, GetWhatsAppWithQRCode } from 'src/service/sessoesWhatsapp'
 import { ListarFilas } from 'src/service/filas'
 import { format, parseISO } from 'date-fns'
 import pt from 'date-fns/locale/pt-BR/index'
@@ -208,7 +208,14 @@ import ModalWhatsapp from './ModalWhatsapp'
 import ItemStatusChannel from './ItemStatusChannel'
 import { ListarChatFlow } from 'src/service/chatFlow'
 
-const userLogado = JSON.parse(localStorage.getItem('usuario'))
+let userLogado
+try {
+  const raw = localStorage.getItem('usuario')
+  userLogado = typeof raw === 'string' ? JSON.parse(raw) : raw
+} catch (e) {
+  console.error('sessaoWhatsapp Index parse error usuario:', e, localStorage.getItem('usuario'))
+  userLogado = null
+}
 
 export default {
   name: 'IndexSessoesWhatsapp',
@@ -351,12 +358,23 @@ export default {
       }
       this.loading = true
       try {
+        // 1. Chamar PUT para gerar novo QR
         await RequestNewQrCode({ id: channel.id, isQrcode: true })
-        setTimeout(() => {
-          this.handleOpenQrModal(channel)
-        }, 2000)
+
+        // ✅ CORRIGIDO: Aumentar timeout de 2s para 4s (total ~7s)
+        await new Promise(resolve => setTimeout(resolve, 4000))
+
+        // ✅ NOVO: 3. Buscar o whatsapp atualizado com o QR do banco
+        const { data: whatsappUpdated } = await GetWhatsAppWithQRCode(channel.id)
+
+        // ✅ NOVO: 4. Atualizar o store com os dados frescos
+        this.$store.commit('UPDATE_WHATSAPPS', whatsappUpdated)
+
+        // ✅ NOVO: 5. Abrir o modal com os dados atualizados
+        this.handleOpenQrModal(channel)
       } catch (error) {
         console.error(error)
+        this.$notificarErro('Erro ao gerar novo QR Code')
       }
       this.loading = false
     },

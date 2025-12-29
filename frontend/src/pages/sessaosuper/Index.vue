@@ -75,7 +75,14 @@ import { mapGetters } from 'vuex'
 import ItemStatusChannel from './ItemStatusChannel'
 import { AdminListarEmpresas } from 'src/service/empresas'
 
-const userLogado = JSON.parse(localStorage.getItem('usuario'))
+let userLogado
+try {
+  const raw = localStorage.getItem('usuario')
+  userLogado = typeof raw === 'string' ? JSON.parse(raw) : raw
+} catch (e) {
+  console.error('sessaosuper Index parse error usuario:', e, localStorage.getItem('usuario'))
+  userLogado = null
+}
 
 export default {
   name: 'IndexSessoesWhatsapp',

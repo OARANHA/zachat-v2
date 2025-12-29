@@ -8,7 +8,11 @@ const VerifyContact = async (
 ): Promise<Contact> => {
   let profilePicUrl;
   try {
-    profilePicUrl = await msgContact.getProfilePicUrl();
+    if (typeof (msgContact as any).getProfilePicUrl === 'function') {
+      profilePicUrl = await (msgContact as any).getProfilePicUrl();
+    } else {
+      profilePicUrl = undefined;
+    }
   } catch (error) {
     profilePicUrl = undefined;
   }
